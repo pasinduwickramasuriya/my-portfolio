@@ -1,0 +1,83 @@
+
+/* Moved Font Awesome import to the top to fix build error: @import must precede all rules except @charset and @layer */
+@import url('@fortawesome/fontawesome-free/css/all.min.css');
+
+/* Moved Devicon import to the top to fix build error and ensure devicon-* icons (e.g., devicon-nextjs-plain) render in Skills.tsx */
+@import url('devicon/devicon.min.css');
+
+/* Import Tailwind CSS and animations (unchanged, kept after @import for correct order) */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Define dark mode variant (unchanged) */
+@custom-variant dark (&:is(.dark *));
+
+/* Simplified theme with blue color scheme and essential variables (unchanged) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-ring: var(--ring);
+  --color-border: var(--border);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Light theme (unchanged, retained for flexibility) */
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0); /* White */
+  --foreground: oklch(0.129 0.042 264.695); /* Dark gray */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755); /* Dark blue */
+  --primary-foreground: oklch(0.984 0.003 247.858); /* Near white */
+  --muted: oklch(0.968 0.007 247.896); /* Light gray */
+  --muted-foreground: oklch(0.554 0.046 257.417); /* Medium gray */
+  --border: oklch(0.929 0.013 255.508); /* Light border */
+  --ring: oklch(0.704 0.04 256.788); /* Blue ring */
+}
+
+/* Dark theme with blue color scheme (unchanged) */
+.dark {
+  --background: oklch(0.129 0.042 264.695); /* Dark navy, ~#1a1a2e */
+  --foreground: oklch(0.984 0.003 247.858); /* Near white */
+  --card: oklch(0.208 0.042 265.755); /* Darker card background */
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --primary: #3b82f6; /* blue-500, matches Skills.tsx, Work.tsx, Contact.tsx */
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031); /* Muted gray, ~#374151 */
+  --muted-foreground: oklch(0.704 0.04 256.788); /* Lighter gray, ~#9ca3af */
+  --border: oklch(1 0 0 / 10%); /* Transparent border, ~#374151/50 */
+  --ring: #60a5fa; /* blue-400 */
+}
+
+/* Override Tailwind colors to match portfolio’s blue scheme (unchanged) */
+@layer base {
+  :root {
+    /* Explicitly define blue palette for consistency */
+    --blue-500: #3b82f6;
+    --blue-400: #60a5fa;
+    --blue-300: #93c5fd;
+    --gray-400: #9ca3af;
+    --gray-800: #1f2937;
+    --gray-700: #374151;
+    --white: #ffffff;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
