@@ -1,23 +1,24 @@
-
-/* Moved Font Awesome import to the top to fix build error: @import must precede all rules except @charset and @layer */
+/* Moved Font Awesome import to the top for Skills.tsx, Contact.tsx, Footer.tsx icons */
 @import url('@fortawesome/fontawesome-free/css/all.min.css');
 
-/* Moved Devicon import to the top to fix build error and ensure devicon-* icons (e.g., devicon-nextjs-plain) render in Skills.tsx */
+/* Moved Devicon import to the top to ensure devicon-* icons (e.g., devicon-nextjs-plain) render */
 @import url('devicon/devicon.min.css');
 
-/* Import Tailwind CSS and animations (unchanged, kept after @import for correct order) */
+/* Added: Import JetBrains Mono from @fontsource for global font usage */
+@import url('@fontsource/jetbrains-mono');
+
+/* Import Tailwind CSS and animations (unchanged) */
 @import "tailwindcss";
 @import "tw-animate-css";
 
 /* Define dark mode variant (unchanged) */
 @custom-variant dark (&:is(.dark *));
 
-/* Simplified theme with blue color scheme and essential variables (unchanged) */
+/* Simplified theme with JetBrains Mono and blue color scheme */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: "JetBrains Mono", monospace; /* Changed: Replaced --font-geist-mono with JetBrains Mono */
   --color-ring: var(--ring);
   --color-border: var(--border);
   --color-muted-foreground: var(--muted-foreground);
@@ -61,10 +62,10 @@
   --ring: #60a5fa; /* blue-400 */
 }
 
-/* Override Tailwind colors to match portfolio’s blue scheme (unchanged) */
+/* Override Tailwind colors and apply JetBrains Mono */
 @layer base {
   :root {
-    /* Explicitly define blue palette for consistency */
+    /* Explicitly define blue palette for consistency (unchanged) */
     --blue-500: #3b82f6;
     --blue-400: #60a5fa;
     --blue-300: #93c5fd;
@@ -78,6 +79,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono; /* Changed: Added font-mono to apply JetBrains Mono globally */
   }
 }

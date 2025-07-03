@@ -102,10 +102,10 @@ export function Navbar() {
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="fixed top-0 w-full bg-background/10 backdrop-blur-md z-50 px-4 sm:px-5 lg:px-7 h-[64px] shadow-sm shadow-primary/10"
+                className="fixed top-0 w-full bg-background/10 backdrop-blur-md z-50 px-4 sm:px-5 lg:px-7 h-[64px]  shadow-primary/10"
             >
                 {/* Navbar Container */}
-                <div className="max-w-5xl mx-auto h-full flex items-center justify-between">
+                <div className="max-w-5xl mx-auto h-full flex items-center justify-between ">
                     {/* Logo + Name */}
                     <Link href="#home" className="flex items-center group">
                         <span className="font-semibold text-lg lg:text-base lg:text-lg text-foreground ml-1.5 bg-gradient-to-r from-primary via-blue-500 to-accent bg-clip-text text-transparent group-hover:scale-105 transition-transform">
@@ -114,7 +114,7 @@ export function Navbar() {
                     </Link>
 
                     {/* Web Navbar */}
-                    <div className="hidden md:flex w-[470px] items-center justify-center">
+                    <div className="hidden md:flex w-[500px] items-center justify-center">
                         <div
                             className="flex items-center justify-between w-full px-3 py-1 rounded-full"
                             style={{
@@ -197,7 +197,7 @@ export function Navbar() {
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.25, ease: "easeOut" }}
-                        className="absolute top-[64px] left-0 w-full bg-background/90 backdrop-blur-md p-3 flex flex-col items-center md:hidden z-50" // Added: Explicit z-50 to ensure mobile menu is above overlay
+                        className=" absolute top-[64px] left-0 w-full bg-background/90 backdrop-blur-md p-3 flex flex-col items-center md:hidden z-50" // Added: Explicit z-50 to ensure mobile menu is above overlay
                     >
                         {/* Logo + Name in Mobile Menu */}
                         <div className="flex items-center justify-center mb-3">
@@ -207,7 +207,7 @@ export function Navbar() {
                         </div>
 
                         {/* Links */}
-                        <div className="flex flex-col items-center gap-1.5 w-full">
+                        <div className=" flex flex-col items-center gap-1.5 w-full">
                             {NAV_LINKS.map((link, index) => (
                                 <motion.div
                                     key={link.title}
@@ -220,7 +220,8 @@ export function Navbar() {
                                     <Button
                                         variant="ghost"
                                         asChild
-                                        className="w-full text-foreground text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5" // Changed: Updated hover:text-pink-300 to hover:text-blue-500 for consistency
+                                        className="w-full text-red-500 text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5"
+
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         <Link href={link.link}>{link.title}</Link>
@@ -237,7 +238,8 @@ export function Navbar() {
                                 <Button
                                     variant="ghost"
                                     asChild
-                                    className="w-full text-foreground text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5" // Changed: Updated hover:text-pink-300 to hover:text-blue-500 for consistency
+                                    // className=" w-full text-foreground text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5" 
+                                     className="w-full text-red-500 text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     <Link href={LINKS.sourceCode} target="_blank" rel="noreferrer noopener">
@@ -261,7 +263,8 @@ export function Navbar() {
                                         href={link}
                                         target="_blank"
                                         rel="noreferrer noopener"
-                                        className="text-foreground hover:text-blue-500 transition-all duration-200 hover:scale-125"
+                                        // className="text-foreground hover:text-blue-500 transition-all duration-200 hover:scale-125"
+                                         className="w-full text-red-500 text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5"
                                     >
                                         <Icon className="h-6 w-6" />
                                     </Link>
