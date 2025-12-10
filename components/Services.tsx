@@ -1,149 +1,201 @@
-
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Service {
     title: string;
-    icon: string;
+    id: string;
     description: string;
     features: string[];
-}
-
-interface ServicesProps {
-    services?: Service[];
-    headerTitle?: string;
-    headerSubtitle?: string;
 }
 
 const defaultServices: Service[] = [
     {
         title: "Web Development",
-        icon: "fas fa-code",
-        description: "Building responsive and scalable websites with modern technologies.",
-        features: ["Next.js", "React", "TypeScript"],
+        id: "01",
+        description: "Building pixel-perfect, responsive websites that perform flawlessly across all devices.",
+        features: ["Next.js", "React", "Tailwind"],
     },
     {
         title: "UI/UX Design",
-        icon: "fas fa-palette",
-        description: "Crafting intuitive and engaging user interfaces with thoughtful design.",
-        features: ["Figma", "User-Centered Design", "Prototyping"],
+        id: "02",
+        description: "Translating complex logic into intuitive, accessible, and beautiful user interfaces.",
+        features: ["Figma", "Prototyping", "Design Systems"],
     },
     {
         title: "API Integration",
-        icon: "fas fa-plug",
-        description: "Seamless backend and frontend integration for robust applications.",
-        features: ["REST APIs", "GraphQL", "Node.js"],
-    }, {
-        title: "Frontend Development",
-        icon: "fas fa-code",
-        description:
-            "Crafting dynamic and responsive user interfaces with modern frontend technologies for seamless user experiences.",
-        features: ["React JS", "Next.js", "TypeScript"],
+        id: "03",
+        description: "Connecting your frontend to the world. Robust integration with third-party services.",
+        features: ["REST", "GraphQL", "Webhooks"],
     },
     {
-        title: "Backend Development",
-        icon: "fas fa-server",
-        description:
-            "Building robust and scalable server-side applications to power web solutions with efficiency and reliability.",
-        features: ["Node.js", "Java", "REST APIs"],
+        title: "Frontend Eng.",
+        id: "04",
+        description: "Crafting the client-side magic. Smooth animations, state management, and speed.",
+        features: ["TypeScript", "Framer Motion", "Redux"],
     },
     {
-        title: "Fullstack Development",
-        icon: "fas fa-laptop-code",
-        description:
-            "Delivering end-to-end web solutions by integrating frontend and backend technologies for comprehensive applications.",
-        features: ["React JS", "Node.js", "Next.js"],
+        title: "Backend Eng.",
+        id: "05",
+        description: "Solid architecture for scalable applications. Database design and server logic.",
+        features: ["Node.js", "PostgreSQL", "Prisma"],
+    },
+    {
+        title: "Fullstack",
+        id: "06",
+        description: "End-to-end delivery. From the database schema to the final pixel on the screen.",
+        features: ["Vercel", "CI/CD", "Testing"],
     },
 ];
 
-function Services({
-    services = defaultServices,
-    headerTitle = "Services",
-    headerSubtitle = "Transforming ideas into digital reality with expertise and creativity",
-}: ServicesProps) {
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const element = document.getElementById("services");
-            if (element) {
-                const { top } = element.getBoundingClientRect();
-                if (top < window.innerHeight * 0.75) {
-                    setIsVisible(true);
-                }
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        handleScroll();
-
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+export default function Services() {
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     return (
-        <section
-            id="services"
-            className="relative min-h-screen py-16 sm:py-24 overflow-hidden"
-        >
-            <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="services" className="relative bg-white py-24 md:py-32 overflow-hidden border-t border-neutral-100">
+
+            {/* 1. Header Section */}
+            <div className="max-w-7xl mx-auto px-6 mb-24">
                 <motion.div
-                    initial={{ opacity: 0, translateY: 4 }}
-                    animate={isVisible ? { opacity: 1, translateY: 0 } : {}}
-                    transition={{ duration: 0.7 }}
-                    className="text-center -mt-5 mb-12 sm:mb-16"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="flex flex-col md:flex-row md:items-end justify-between gap-8"
                 >
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                        {headerTitle}
-                    </h2>
-                    <div className="h-1 w-20 bg-blue-500 mx-auto rounded-full mb-4" />
-                    <p className="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto">
-                        {headerSubtitle}
+                    <div>
+                        <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase text-black mb-4">
+                            My <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-lime-500 to-lime-600 z-10">
+                                Expertise
+                                {/* Decorative underline */}
+                                <svg className="absolute w-full h-3 -bottom-1 left-0 text-lime-400 -z-10 opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                                </svg>
+                            </span>
+                        </h2>
+                    </div>
+                    <p className="max-w-md text-neutral-700 font-medium text-base md:text-lg leading-relaxed border-l-4 border-lime-400 pl-6">
+                        I combine technical precision with design thinking to build scalable, human-centered digital products.
                     </p>
                 </motion.div>
+            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-                    {services.map((service: Service, index: number) => (
-                        <div
-                            key={service.title}
-                            className={`group relative p-4 sm:p-6 rounded-2xl bg-gray-800/30 backdrop-blur-sm border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 transform hover:-translate-y-2 ${isVisible
-                                    ? "opacity-100 translate-y-0"
-                                    : "opacity-0 translate-y-4"
-                                }`}
-                            style={{ transitionDelay: `${index * 200}ms` }}
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-                            <div className="relative z-10">
-                                <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-500">
-                                    <i
-                                        className={`${service.icon} text-xl sm:text-2xl text-blue-400 group-hover:text-blue-300`}
-                                        aria-hidden="true"
-                                    />
-                                </div>
-                                <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 group-hover:text-blue-300 transition-colors duration-300">
-                                    {service.title}
-                                </h3>
-                                <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 group-hover:text-gray-300 transition-colors duration-300">
-                                    {service.description}
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                    {service.features.map((feature: string) => (
-                                        <span
-                                            key={feature}
-                                            className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm rounded-full bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 group-hover:text-blue-300 transition-all duration-300"
-                                        >
-                                            {feature}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
+            {/* 2. The Rounded Grid */}
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    {defaultServices.map((service, index) => (
+                        <ServiceCard
+                            key={index}
+                            service={service}
+                            index={index}
+                            hoveredIndex={hoveredIndex}
+                            setHoveredIndex={setHoveredIndex}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* 3. Infinite Tech Ticker (Marquee) */}
+            <div className="mt-32 bg-white py-10 overflow-hidden flex -rotate-1 scale-105 transform origin-left">
+                <div className="animate-marquee whitespace-nowrap flex gap-16 items-center">
+                    {[...Array(2)].map((_, i) => (
+                        <div key={i} className="flex gap-16">
+                            {["Next.js", "React", "TypeScript", "Node.js", "Figma", "TailwindCSS", "Prisma", "PostgreSQL", "Framer Motion", "Docker", "AWS"].map((tech) => (
+                                <span key={tech} className="text-5xl font-black text-lime-300  uppercase hover:text-lime-300 hover:[-webkit-text-stroke:1px_transparent] transition-colors cursor-default duration-300">
+                                    {tech}
+                                </span>
+                            ))}
                         </div>
                     ))}
                 </div>
             </div>
+
+            <style jsx global>{`
+                @keyframes marquee {
+                  0% { transform: translateX(0); }
+                  100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                  animation: marquee 40s linear infinite;
+                }
+            `}</style>
         </section>
     );
 }
 
-export default Services;
+// --- SUB-COMPONENT: SERVICE CARD ---
+function ServiceCard({
+    service,
+    index,
+    hoveredIndex,
+    setHoveredIndex
+}: {
+    service: Service;
+    index: number;
+    hoveredIndex: number | null;
+    setHoveredIndex: (i: number | null) => void;
+}) {
+    // Determine if this card is being hovered, or if another card is (so this one should blur)
+    const isHovered = hoveredIndex === index;
+    const isBlur = hoveredIndex !== null && hoveredIndex !== index;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: index * 0.1, duration: 0.5, ease: "circOut" }}
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+            // Rounded-3xl (approx 24px) or Rounded-[2.5rem] (40px) for that super modern look
+            className={`
+                group relative h-[360px] p-8 md:p-10 flex flex-col justify-between 
+                bg-white border-2 rounded-[2.5rem] transition-all duration-500 ease-out cursor-default
+                ${isHovered
+                    ? "border-black shadow-[0px_20px_40px_-15px_rgba(0,0,0,0.1)] -translate-y-2 z-10"
+                    : "border-neutral-100 hover:border-neutral-200"
+                }
+                ${isBlur ? "opacity-50 blur-[2px] scale-95" : "opacity-100 scale-100 blur-0"}
+            `}
+        >
+            {/* Background Hover Gradient (Subtle) */}
+            <div className={`absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-lime-50/50 to-transparent opacity-0 transition-opacity duration-500 ${isHovered ? "opacity-100" : ""}`} />
+
+            {/* Top: ID and Icon Placeholder */}
+            <div className="relative flex justify-between items-start z-10">
+                <span className={`text-6xl font-black tracking-tighter transition-colors duration-300 ${isHovered ? "text-black" : "text-neutral-200"}`}>
+                    {service.id}
+                </span>
+
+                {/* Arrow Icon that rotates on hover */}
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isHovered ? "bg-lime-400 border-lime-400 rotate-45" : "bg-white border-neutral-100"}`}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={isHovered ? "text-black" : "text-black"}>
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            {/* Bottom: Content */}
+            <div className="relative z-10">
+                <h3 className="text-3xl font-black uppercase text-black mb-4 leading-none">
+                    {service.title}
+                </h3>
+                {/* Darkened text for better visibility */}
+                <p className="text-neutral-600 font-medium text-sm md:text-base leading-relaxed mb-6">
+                    {service.description}
+                </p>
+
+                {/* Features (Pills) - Fully Rounded */}
+                <div className="flex flex-wrap gap-2">
+                    {service.features.map(f => (
+                        <span key={f} className={`text-xs font-bold uppercase tracking-wide px-4 py-2 rounded-full border transition-colors duration-300 ${isHovered ? "bg-black border-black text-white" : "bg-neutral-50 border-neutral-100 text-neutral-500"}`}>
+                            {f}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </motion.div>
+    );
+}

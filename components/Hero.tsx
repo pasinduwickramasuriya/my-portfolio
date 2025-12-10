@@ -1,140 +1,138 @@
+
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import {
+    motion,
+    useScroll,
+    useTransform,
+    useSpring,
+    useMotionValue,
+    useAnimationFrame,
+    wrap,
+} from "framer-motion";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import TypewriterComponent from "typewriter-effect";
 
 interface HeroProps {
-    greeting?: string;
     name?: string;
-    typewriterStrings?: string[];
-    profileImage?: string;
-    profileImageAlt?: string;
-    ctaLink?: string;
+    role?: string;
+    imageSrc?: string;
 }
 
-function Hero({
-    greeting = "Code → Design → Impact",
-    name = "Pasindu Wickramasuriya",
-    typewriterStrings = [
-        "Frontend Engineer",
-        "Backend Engineer",
-        "Fullstack Engineer",
-        "UI/UX Engineer",
-    ],
-    profileImage = "/pasi.png", // Image in public/pasi.png
-    profileImageAlt = "Profile picture of Pasindu",
-    ctaLink = "#contact",
-}: HeroProps) {
-    const [isVisible, setIsVisible] = useState(false);
+// --- 1. The Moving Text Component (Adapted for White Background) ---
+function ParallaxText({ children, baseVelocity = 100 }: { children: string; baseVelocity: number }) {
+    const baseX = useMotionValue(0);
+    const { scrollY } = useScroll();
+    const scrollVelocity = useVelocity(scrollY);
+    const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+    const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], { clamp: false });
 
-    useEffect(() => {
-        setIsVisible(true);
-    }, []);
+    const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`);
+
+    const directionFactor = useRef<number>(1);
+    useAnimationFrame((t, delta) => {
+        let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
+        if (velocityFactor.get() < 0) {
+            directionFactor.current = -1;
+        } else if (velocityFactor.get() > 0) {
+            directionFactor.current = 1;
+        }
+        moveBy += directionFactor.current * moveBy * velocityFactor.get();
+        baseX.set(baseX.get() + moveBy);
+    });
 
     return (
-        <section
-            id="home"
-            className="relative min-h-[80vh] overflow-hidden flex items-center justify-center" // Changed: Reduced min-h-screen to min-h-[80vh] to prevent overflow on mobile
-        >
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[80vh] min-w-[320px]"> {/* Changed: Adjusted min-h-screen to min-h-[80vh], kept min-w-[320px] */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 min-h-[80vh] items-center justify-items-center"> {/* Changed: Adjusted min-h-screen to min-h-[80vh] */}
-                    {/* Left Side: Text Content */}
-                    <div className="pt-16 sm:pt-20 md:pt-0 max-w-lg sm:max-w-xl justify-self-center md:justify-self-start text-center md:text-left"> {/* Changed: Added md:text-left for desktop alignment */}
-                        <motion.div
-                            initial={{ translateY: 10, opacity: 0 }}
-                            animate={isVisible ? { translateY: 0, opacity: 1 } : {}}
-                            transition={{ duration: 0.5 }} // Changed: Reduced duration from 0.7 to 0.5 for faster mobile animation
-                            className="mb-6 sm:mb-8 will-change-transform-opacity" // Added: will-change-transform-opacity for performance
-                        >
-                            <div className="inline-block rounded-full px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-300 border border-gray-700 hover:border-blue-500 transition-all duration-300 backdrop-blur-sm bg-gray-900/30">
-                                {greeting}
-                            </div>
-                        </motion.div>
-
-                        <motion.h1
-                            initial={{ translateY: 10, opacity: 0 }}
-                            animate={isVisible ? { translateY: 0, opacity: 1 } : {}}
-                            transition={{ duration: 0.5, delay: 0.1 }} // Changed: Reduced duration from 0.7 to 0.5, added delay: 0.1
-                            className="text-3xl sm:text-4xl md:text-5xl lg:text-4xl font-bold tracking-tight text-white mb-6 sm:mb-8 will-change-transform-opacity" // Added: will-change-transform-opacity
-                        >
-                            <span className="relative">
-                                Hi, I'm<br />{" "}
-                                {/* <span className="bg-gradient-to-r from-primary via-blue-500 to-accent bg-clip-text text-transparent"> */}
-                                <span className="text-blue-500">
-
-                                    {name}
-                                </span>
-                            </span>
-                        </motion.h1>
-
-                        <motion.div
-                            initial={{ translateY: 10, opacity: 0 }}
-                            animate={isVisible ? { translateY: 0, opacity: 1 } : {}}
-                            transition={{ duration: 0.5, delay: 0.2 }} // Changed: Reduced duration from 0.7 to 0.5, adjusted delay to 0.2
-                            className="will-change-contents" // Added: will-change-contents for TypewriterComponent performance
-                        >
-                            <TypewriterComponent
-                                options={{
-                                    strings: typewriterStrings,
-                                    autoStart: true,
-                                    loop: true,
-                                    deleteSpeed: 100, // Changed: Increased deleteSpeed from 50 to 100 to reduce DOM updates
-                                    delay: 150, // Changed: Increased delay from 100 to 150 to slow typing
-                                    wrapperClassName:
-                                        "text-lg sm:text-xl md:text-2xl font-medium text-blue-500",
-                                }}
-                            />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ translateY: 10, opacity: 0 }}
-                            animate={isVisible ? { translateY: 0, opacity: 1 } : {}}
-                            transition={{ duration: 0.5, delay: 0.3 }} // Changed: Reduced duration from 0.7 to 0.5, adjusted delay to 0.3
-                            className="mt-8 sm:mt-10 flex items-center justify-center gap-x-4 sm:gap-x-6 will-change-transform-opacity" // Added: will-change-transform-opacity
-                        >
-                            <Button
-                                size="lg"
-                                asChild
-                                className="group relative rounded-lg bg-blue-500 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-blue-600 transition-all duration-300 hover:scale-105 overflow-hidden"
-                            >
-                                <a href={ctaLink} aria-label="Get in Touch">
-                                    <span className="relative z-10">Get in Touch</span>
-                                    <div className="absolute inset-0 bg-blue-400 transform origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
-                                </a>
-                            </Button>
-                        </motion.div>
-                    </div>
-
-                    {/* Right Side: Circular Photo with Simplified Blur Effect */}
-                    <motion.div
-                        initial={{ translateX: 10, opacity: 0 }}
-                        animate={isVisible ? { translateX: 0, opacity: 1 } : {}}
-                        transition={{ duration: 0.5, delay: 0.2 }} // Changed: Reduced duration from 0.7 to 0.5
-                        className="relative w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] md:w-[350px] md:h-[350px] justify-self-center md:justify-self-end mt-8 md:mt-0 will-change-transform-opacity" // Changed: Adjusted w-[300px] h-[300px] md:w-[450px] md:h-[450px] to w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] md:w-[350px] md:h-[350px] for mobile
-                    >
-                        <div className="absolute inset-0 bg-blue-500/10 backdrop-blur-md rounded-full z-10" />
-                        {/* <div className="absolute inset-8 md:inset-10 bg-blue-500/20 rounded-full blur-3xl z-20" /> */}
-
-                        <div className="absolute inset-1 rounded-full border-2 border-dashed border-blue-400/100 animate-spin-wild z-10" />
-                        {/* <div className="absolute inset-4 sm:inset-6 md:inset-8 bg-violet-500/20 rounded-full blur-3xl z-0" />  */}
-
-
-                        <img
-                            src={profileImage}
-                            alt={profileImageAlt}
-                            className="relative z-20 w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px] mx-auto object-contain drop-shadow-2xl" // Changed: Adjusted w-[250px] h-[250px] md:w-[400px] md:h-[400px] to w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[300px] md:h-[300px]
-                        />
-                    </motion.div>
-                </div>
-            </div>
-        </section>
+        <div className="overflow-hidden m-0 whitespace-nowrap flex flex-nowrap">
+            <motion.div style={{ x }} className="font-black uppercase text-9xl md:text-[12rem] lg:text-[16rem] leading-[0.85] tracking-tighter flex whitespace-nowrap">
+                {/* Ghost Text (Lime) */}
+                <span className="block mr-8 text-lime-400/100">{children} </span>
+                {/* Main Text (Black) */}
+                <span className="block mr-8 text-black">{children} </span>
+                {/* Ghost Text (Gray) */}
+                <span className="block mr-8 text-gray-200">{children} </span>
+                {/* Main Text (Black) */}
+                <span className="block mr-8 text-black">{children} </span>
+            </motion.div>
+        </div>
     );
 }
 
-export default Hero;
+function useVelocity(value: any) {
+    const velocity = useMotionValue(0);
+    return velocity;
+}
+
+// --- 2. Main Hero Component (White Theme) ---
+export default function Hero({
+    name = "PASINDU",
+    imageSrc = "/pp1.png",
+}: HeroProps) {
+
+    return (
+        <section className="relative h-screen w-full bg-white overflow-hidden flex flex-col justify-end">
+
+            {/* BACKGROUND GRID (Darker gray for visibility on white) */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
 
 
+            {/* LAYER 1: THE MOVING TEXT */}
+            <div className="absolute inset-0 flex flex-col justify-center z-0 opacity-70 select-none pointer-events-none">
+                <div className="rotate-[-2deg] scale-110">
+                    <ParallaxText baseVelocity={-1}>{name}</ParallaxText>
+                </div>
+                <div className="rotate-[2deg] scale-110 mt-[-20px] md:mt-[-60px]">
+                    <ParallaxText baseVelocity={2}>WICKRAMASURIYA</ParallaxText>
+                </div>
+            </div>
+
+            {/* LAYER 2: THE FULL IMAGE */}
+            <motion.div
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                // UPDATED CLASS:
+                // h-[60vh] (Mobile) vs md:h-[90vh] (Desktop) -> Prevents image from being too huge on phones
+                // pb-24 (Mobile) -> Pushes image up so it looks centered above the buttons
+                // items-end -> Anchors image to the bottom of this defined height
+                className="relative z-10 w-full h-[60vh] md:h-[90vh] flex items-end justify-center pointer-events-none pb-24 md:pb-0"
+            >
+                <img
+                    src={imageSrc}
+                    alt="Pasindu"
+                    // Removed grayscale to make it pop on white, or keep it if you prefer the style
+                    className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] grayscale hover:grayscale-0 transition-all duration-700 ease-out"
+                />
+
+                {/* Gradient fade - Changed to WHITE to blend into the floor */}
+                <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
+            </motion.div>
+
+            {/* LAYER 3: FOREGROUND CONTENT */}
+            <div className="absolute bottom-10 left-0 w-full z-20 flex flex-col items-center gap-6 pb-8">
+
+                {/* Glass Box - Light Mode */}
+                <div className="bg-white/60 backdrop-blur-md border border-black/5 px-6 py-4 rounded-xl text-center shadow-lg">
+                    <TypewriterComponent
+                        options={{
+                            strings: ["Frontend Engineer", "UI/UX Designer", "Fullstack Developer"],
+                            autoStart: true,
+                            loop: true,
+                            wrapperClassName: "text-xl md:text-2xl font-bold text-black", // Black text
+                            cursorClassName: "text-lime-500" // Lime cursor
+                        }}
+                    />
+                </div>
+
+                <Button
+                    className="rounded-full bg-lime-400 text-black hover:bg-lime-500 font-bold text-lg px-8 py-6 transition-transform hover:scale-105 shadow-xl shadow-lime-400/20"
+                >
+                    <a href="#contact">Let's Create Magic</a>
+                </Button>
+            </div>
+
+        </section>
+    );
+}

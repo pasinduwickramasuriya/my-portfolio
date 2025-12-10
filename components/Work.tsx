@@ -1,273 +1,221 @@
+
+
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Project {
+    id: number;
     title: string;
     description: string;
     tech: string[];
-    image: string;
     liveLink: string;
     githubLink?: string;
-    behanceLink?: string;
     category: string;
-    featured?: boolean;
-}
-
-interface WorkProps {
-    projects?: Project[];
-    filters?: string[];
+    year: string; // Added year for extra context
 }
 
 const defaultProjects: Project[] = [
     {
-        title: "Adventure Next.js",
-        description:
-            "Full-stack safari booking system with dark-themed UI, RESTful API, and customer messaging.",
-        tech: ["Next.js", "Node.js", "TypeScript", "MongoDB", "ShadCN", "Tailwind CSS", "NodeMailer"],
-        image: "/adventure-next.png",
-        liveLink: "https://github.com/pasinduwickramasuriya",
-        githubLink: "https://github.com/pasinduwickramasuriya",
+        id: 1,
+        title: "Adventure Next",
+        description: "A full-stack safari booking system featuring a high-performance dark mode UI, real-time availability checking, and RESTful API integration.",
+        tech: ["Next.js", "TypeScript", "MongoDB", "Tailwind"],
+        liveLink: "#",
+        githubLink: "#",
         category: "Full-Stack",
-        featured: true,
+        year: "2024"
     },
     {
+        id: 2,
         title: "NextSecure Auth",
-        description:
-            "Secure authentication system with NextAuth.js and modern, responsive design.",
-        tech: ["Next.js", "MongoDB", "NextAuth.js", "ShadCN", "Tailwind CSS", "TypeScript"],
-        image: "/nextsecure-auth.png",
-        liveLink: "https://github.com/pasinduwickramasuriya",
-        githubLink: "https://github.com/pasinduwickramasuriya",
+        description: "Enterprise-grade authentication system utilizing NextAuth.js v5. Includes 2FA, passwordless login, and role-based access control.",
+        tech: ["Next.js", "NextAuth", "ShadCN"],
+        liveLink: "#",
         category: "Full-Stack",
-        featured: true,
+        year: "2024"
     },
     {
-        title: "Pharmacy Inventory Management",
-        description:
-            "Desktop app for streamlined inventory management and billing with SQL Server.",
-        tech: ["C#", "SQL Server", "Visual Studio"],
-        image: "/pharmacy-inventory.png",
-        liveLink: "https://github.com/pasinduwickramasuriya",
-        githubLink: "https://github.com/pasinduwickramasuriya",
+        id: 3,
+        title: "Pharmacy Inv.",
+        description: "Desktop application for inventory management. Features include barcode scanning, automated re-ordering, and SQL Server sync.",
+        tech: ["C#", "SQL Server", ".NET"],
+        liveLink: "#",
         category: "Desktop",
+        year: "2023"
     },
     {
-        title: "Room Booking Web App",
-        description:
-            "Full-stack MERN app with Stripe payments and email notifications for room booking.",
-        tech: ["React.js", "Node.js", "MongoDB", "Express.js", "Bootstrap", "Stripe", "NodeMailer"],
-        image: "/room-booking.png",
-        liveLink: "https://github.com/pasinduwickramasuriya",
-        githubLink: "https://github.com/username/room-booking",
+        id: 4,
+        title: "Room Booking",
+        description: "MERN stack application integrated with Stripe for secure payments and NodeMailer for automated booking confirmations.",
+        tech: ["React", "Node.js", "Stripe"],
+        liveLink: "#",
         category: "Full-Stack",
+        year: "2023"
     },
     {
-        title: "Tour Booking Web App",
-        description:
-            "Responsive frontend for a tour booking app using React.js and custom CSS.",
-        tech: ["React.js", "Custom CSS"],
-        image: "/tour-booking.png",
-        liveLink: "https://github.com/pasinduwickramasuriya",
-        githubLink: "https://github.com/pasinduwickramasuriya",
+        id: 5,
+        title: "Tour Booking UI",
+        description: "High-conversion landing page optimized for Core Web Vitals. Features complex GSAP animations and responsive layouts.",
+        tech: ["React", "Framer Motion", "GSAP"],
+        liveLink: "#",
         category: "UI/UX",
+        year: "2023"
     },
 ];
 
-const defaultFilters: string[] = ["All", "Full-Stack", "Desktop", "UI/UX"];
+const categories = ["All", "Full-Stack", "Desktop", "UI/UX"];
 
-function Work({
-    projects = defaultProjects,
-    filters = defaultFilters,
-}: WorkProps) {
-    const [activeFilter, setActiveFilter] = useState("All");
-    const [isVisible, setIsVisible] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+export default function Work() {
+    const [activeCategory, setActiveCategory] = useState("All");
+    const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
-    const filteredProjects =
-        activeFilter === "All"
-            ? projects
-            : projects.filter(
-                (project: Project) => project.category === activeFilter
-            );
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const element = document.getElementById("work");
-            if (element) {
-                const { top } = element.getBoundingClientRect();
-                if (top < window.innerHeight * 0.75) {
-                    setIsVisible(true);
-                }
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        handleScroll();
-
-        const timer = setTimeout(() => setIsLoading(false), 1000);
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-            clearTimeout(timer);
-        };
-    }, []);
-
-    const SkeletonCard = () => (
-        <div className="bg-gray-800/30 rounded-xl overflow-hidden animate-pulse">
-            <div className="h-48 bg-gray-700/30" />
-            <div className="p-4 sm:p-6 space-y-4">
-                <div className="h-6 w-2/3 bg-gray-700/30 rounded" />
-                <div className="h-4 w-full bg-gray-700/30 rounded" />
-                <div className="h-4 w-3/4 bg-gray-700/30 rounded" />
-                <div className="flex gap-2">
-                    <div className="h-8 w-20 bg-gray-700/30 rounded-full" />
-                    <div className="h-8 w-20 bg-gray-700/30 rounded-full" />
-                </div>
-            </div>
-        </div>
+    // Filter logic
+    const filteredProjects = defaultProjects.filter(
+        (project) => activeCategory === "All" || project.category === activeCategory
     );
 
     return (
-        <section
-            id="work"
-            className="relative min-h-screen  py-16 sm:py-24 overflow-hidden"
-        >
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <motion.div
-                    initial={{ opacity: 0, translateY: 4 }}
-                    animate={isVisible ? { opacity: 1, translateY: 0 } : {}}
-                    transition={{ duration: 0.7 }}
-                    className="text-center mb-12 sm:mb-16"
-                >
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                        My Work
-                    </h2>
-                    <div className="h-1 w-20 bg-blue-500 mx-auto rounded-full mb-4" />
-                    <p className="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto">
-                        A showcase of my full-stack, desktop, and UI/UX projects
-                    </p>
+        <section id="work" className="relative bg-white py-24 md:py-32 overflow-hidden border-t border-neutral-100">
+            <div className="max-w-7xl mx-auto px-6">
+
+                {/* 1. Header & Filter Row */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-20">
+
+                    {/* Title */}
+                    <div>
+                        <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase text-black">
+                            Selected <span className="text-lime-500">Work</span>
+                        </h2>
+                        <p className="max-w-md text-neutral-700 font-medium text-sm md:text-base mt-6 border-l-4 border-lime-400 pl-6">
+                            A collection of deployed applications, experiments, and open-source contributions.
+                        </p>
+                    </div>
+
+                    {/* Modern Pill Filter */}
+                    <div className="flex flex-wrap gap-2 bg-neutral-100 p-2 rounded-full border border-neutral-200">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat}
+                                onClick={() => setActiveCategory(cat)}
+                                className={`relative px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wider transition-colors duration-300 z-10 ${activeCategory === cat ? "text-white" : "text-neutral-500 hover:text-black"
+                                    }`}
+                            >
+                                {activeCategory === cat && (
+                                    <motion.div
+                                        layoutId="activeFilter"
+                                        className="absolute inset-0 bg-black rounded-full -z-10"
+                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    />
+                                )}
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 2. Masonry Grid */}
+                <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    <AnimatePresence mode="popLayout">
+                        {filteredProjects.map((project) => (
+                            <ProjectCard
+                                key={project.id}
+                                project={project}
+                                isHovered={hoveredProject === project.id}
+                                setHovered={setHoveredProject}
+                            />
+                        ))}
+                    </AnimatePresence>
                 </motion.div>
 
-                <div
-                    className={`flex flex-wrap justify-center mb-8 sm:mb-12 gap-2 sm:gap-4 transition-all duration-700 delay-100 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                        }`}
-                >
-                    {filters.map((filter: string) => (
-                        <button
-                            key={filter}
-                            onClick={() => setActiveFilter(filter)}
-                            className={`px-4 sm:px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm sm:text-base ${activeFilter === filter
-                                ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25"
-                                : "bg-gray-800/50 text-gray-400 hover:text-white"
-                                }`}
-                        >
-                            {filter}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                    {isLoading
-                        ? [...Array(6)].map((_, index: number) => (
-                            <SkeletonCard key={index} />
-                        ))
-                        : filteredProjects.map((project: Project, index: number) => (
-                            <div
-                                key={project.title}
-                                className={`group relative bg-gray-800/30 rounded-xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 transform hover:-translate-y-2 backdrop-blur-sm ${isVisible
-                                    ? "opacity-100 translate-y-0"
-                                    : "opacity-0 translate-y-4"
-                                    }`}
-                                style={{ transitionDelay: `${index * 100}ms` }}
-                            >
-                                {/* <div className="relative overflow-hidden aspect-video">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                    {project.featured && (
-                      <div className="absolute top-4 right-4 px-3 py-1 bg-blue-500 text-white text-sm rounded-full transform rotate-3">
-                        Featured
-                      </div>
-                    )}
-                  </div> */}
-
-                                <div className="p-4 sm:p-6 space-y-4">
-                                    <h3 className="text-lg sm:text-xl font-semibold text-white group-hover:text-blue-400 transition-colors duration-300">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-sm sm:text-base text-gray-400 group-hover:text-gray-300 transition-colors duration-300">
-                                        {project.description}
-                                    </p>
-
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tech.map((tech: string) => (
-                                            <span
-                                                key={tech}
-                                                className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm rounded-full bg-blue-500/10 text-blue-400 group-hover:bg-blue-500/20 group-hover:text-blue-300 transition-all duration-300"
-                                            >
-                                                {tech}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
-                                        <a
-                                            href={project.liveLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors duration-300"
-                                        >
-                                            <span>View Project</span>
-                                            <svg
-                                                className="w-4 h-4 transform transition-transform group-hover:translate-x-1"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                                                />
-                                            </svg>
-                                        </a>
-                                        <div className="flex gap-4">
-                                            {project.githubLink && (
-                                                <a
-                                                    href={project.githubLink}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-gray-400 hover:text-blue-400 transition-colors duration-300"
-                                                >
-                                                    <i className="fab fa-github text-lg sm:text-xl" />
-                                                </a>
-                                            )}
-                                            {project.behanceLink && (
-                                                <a
-                                                    href={project.behanceLink}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-gray-400 hover:text-blue-400 transition-colors duration-300"
-                                                >
-                                                    <i className="fab fa-behance text-lg sm:text-xl" />
-                                                </a>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                </div>
             </div>
         </section>
     );
 }
 
-export default Work;
+// --- SUB-COMPONENT: TEXT-ONLY PROJECT CARD ---
+function ProjectCard({
+    project,
+    isHovered,
+    setHovered
+}: {
+    project: Project;
+    isHovered: boolean;
+    setHovered: (id: number | null) => void;
+}) {
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
+            onMouseEnter={() => setHovered(project.id)}
+            onMouseLeave={() => setHovered(null)}
+            className={`
+                group relative bg-white border-2 rounded-[2.5rem] p-10 flex flex-col justify-between overflow-hidden cursor-pointer min-h-[350px]
+                transition-all duration-300 ease-out
+                ${isHovered
+                    ? "border-black shadow-[0px_20px_40px_-15px_rgba(0,0,0,0.1)] -translate-y-2"
+                    : "border-neutral-100"
+                }
+            `}
+        >
+            {/* Background Slash Effect (Cutter Animation) */}
+            <div
+                className={`absolute inset-0 bg-gradient-to-tr from-lime-50 via-transparent to-transparent opacity-0 transition-opacity duration-500 ${isHovered ? "opacity-100" : ""}`}
+            />
+
+            {/* Top Row: Category & Year */}
+            <div className="relative z-10 flex justify-between items-start mb-6">
+                <span className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-xs font-bold uppercase tracking-wider group-hover:bg-black group-hover:text-white transition-colors duration-300">
+                    {project.category}
+                </span>
+                <span className="font-mono text-neutral-400 text-sm font-bold">
+                    {project.year}
+                </span>
+            </div>
+
+            {/* Middle: Title & Desc */}
+            <div className="relative z-10 mb-8">
+                <div className="flex items-start justify-between gap-4">
+                    <h3 className="text-4xl md:text-5xl font-black uppercase text-black leading-[0.9] mb-4 tracking-tighter">
+                        {project.title}
+                    </h3>
+
+                    {/* Big Action Arrow */}
+                    <div className="w-12 h-12 rounded-full border-2 border-neutral-200 flex items-center justify-center group-hover:bg-lime-400 group-hover:border-lime-400 transition-all duration-300">
+                        <svg
+                            className={`w-6 h-6 text-black transition-transform duration-500 ${isHovered ? "rotate-[-45deg]" : "rotate-0"}`}
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </div>
+                </div>
+
+                <p className="text-neutral-700 font-medium leading-relaxed max-w-md">
+                    {project.description}
+                </p>
+            </div>
+
+            {/* Bottom: Tech Stack */}
+            <div className="relative z-10 flex flex-wrap gap-2 mt-auto">
+                {project.tech.map((t) => (
+                    <span
+                        key={t}
+                        className="text-xs font-bold uppercase tracking-wide border border-neutral-200 px-3 py-1.5 rounded-full text-neutral-500 group-hover:border-black group-hover:text-black transition-colors duration-300"
+                    >
+                        {t}
+                    </span>
+                ))}
+            </div>
+
+            {/* Decorative Corner Slash */}
+            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-lime-400 rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none" />
+
+        </motion.div>
+    );
+}

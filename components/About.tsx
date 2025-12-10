@@ -1,120 +1,154 @@
+
+
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 interface TimelineItem {
     year: string;
     title: string;
     description: string;
-}
-
-interface AboutProps {
-    timeline?: TimelineItem[];
-    title?: string;
+    tags?: string[];
 }
 
 const defaultTimeline: TimelineItem[] = [
     {
         year: "2023",
-        title: "Started BIT at University of Moratuwa",
+        title: "The Foundation",
         description:
-            "began pursuing a Bachelor of Information Technology (BIT) degree at the University of Moratuwa, completing the first year with a strong foundation in IT and software development.",
+            "Began pursuing a Bachelor of Information Technology (BIT) degree at the University of Moratuwa. Completed the first year with a distinction, laying a strong foundation in Algorithms, OOP, and Web Technologies.",
+        tags: ["University of Moratuwa", "Java", "DSA"],
     },
     {
         year: "2024",
-        title: "Completed Second Year of BIT",
+        title: "Full Stack Evolution",
         description:
-            " successfully completed the second year of the BIT degree at the University of Moratuwa, advancing skills in programming, systems design, and modern technologies.",
+            "Successfully completed the second year, shifting focus to complex system architecture. Built multiple full-stack applications and mastered modern frameworks like Next.js and Tailwind CSS.",
+        tags: ["System Design", "Next.js", "PostgreSQL"],
     },
     {
         year: "2025",
-        title: "Third Year, Final Semester of BIT",
+        title: "Final Frontier",
         description:
-            "currently in the third year, final semester of the BIT degree at the University of Moratuwa, focusing on advanced topics and preparing for a career in technology.",
+            "Currently in the third year, final semester. Focusing on advanced HCI (Human-Computer Interaction) and preparing for professional deployment. Polishing skills to bridge the gap between code and design.",
+        tags: ["HCI", "AI Integration", "Graduation"],
     },
 ];
 
-function About({
-    timeline = defaultTimeline,
-    title = "About Me",
-}: AboutProps) {
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const element = document.getElementById("about");
-            if (element) {
-                const { top } = element.getBoundingClientRect();
-                if (top < window.innerHeight * 0.75) {
-                    setIsVisible(true);
-                }
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        handleScroll();
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
+export default function About() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"],
+    });
 
     return (
-        <section
-            id="about"
-            className="relative min-h-screen  py-16 sm:py-24 overflow-hidden"
-        >
-            <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <motion.div
-                    initial={{ opacity: 0, translateY: 4 }}
-                    animate={isVisible ? { opacity: 1, translateY: 0 } : {}}
-                    transition={{ duration: 0.7 }}
-                    className="text-center -mt-10 mb-12 sm:mb-20"
-                >
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                        {title}
-                    </h2>
-                    <div className="h-1 w-20 bg-blue-500 mx-auto rounded-full" />
-                </motion.div>
+        <section ref={containerRef} id="about" className="relative bg-white text-black w-full">
 
-                <div className="relative">
-                    <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-blue-500/20" />
+            {/* 1. LAYOUT GRID */}
+            <div className="flex flex-col md:flex-row max-w-7xl mx-auto">
 
-                    {timeline.map((item: TimelineItem, index: number) => (
-                        <div
-                            key={item.year + index}
-                            className={`relative flex flex-col sm:flex-row items-center mb-8 sm:mb-12 transition-all duration-700 ${isVisible
-                                    ? "opacity-100 translate-y-0"
-                                    : "opacity-0 translate-y-4"
-                                }`}
-                            style={{ transitionDelay: `${index * 200}ms` }}
+                {/* --- LEFT COLUMN (STICKY HEADER) --- */}
+                <div className="w-full md:w-5/12 relative">
+                    <div className="sticky top-0 h-[30vh] md:h-screen flex flex-col justify-center px-6 md:px-12 py-12 md:py-0 border-r border-neutral-100">
+
+                        {/* Animated Title */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="relative z-10"
                         >
-                            <div className="sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center mb-4 sm:mb-0">
-                                <span className="text-white font-bold">{item.year}</span>
-                            </div>
+                            <h2 className="text-[12vw] md:text-[8vw] leading-[0.8] font-black tracking-tighter uppercase text-black mb-4">
+                                About<br />
+                                <span className="text-lime-500">Me.</span>
+                            </h2>
 
-                            <div
-                                className={`w-full sm:w-5/12 ${index % 2 === 0
-                                        ? "sm:pr-16 sm:text-right"
-                                        : "sm:pl-16 sm:ml-auto"
-                                    }`}
-                            >
-                                <div className="p-4 sm:p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 transform hover:-translate-y-1">
-                                    <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">
-                                        {item.title}
-                                    </h3>
-                                    <p className="text-sm sm:text-base text-gray-300">
-                                        {item.description}
-                                    </p>
-                                </div>
-                            </div>
+                            <div className="h-1 w-24 bg-black mt-6 mb-6" />
+
+                            {/* CHANGED: text-neutral-500 -> text-gray-700 for better visibility */}
+                            <p className="text-gray-700 font-medium max-w-xs text-sm md:text-base leading-relaxed">
+                                A journey from curiosity to code. Here is the timeline of my academic and professional evolution.
+                            </p>
+                        </motion.div>
+
+                        {/* Decorative Background Number fading in */}
+                        <div className="absolute -left-10 top-1/2 -translate-y-1/2 text-[40vh] font-black text-neutral-50 opacity-[0.03] select-none pointer-events-none">
+                            02
                         </div>
+                    </div>
+                </div>
+
+                {/* --- RIGHT COLUMN (SCROLLING CONTENT) --- */}
+                <div className="w-full md:w-7/12 px-6 md:px-20 py-20 md:py-32 flex flex-col gap-32">
+                    {defaultTimeline.map((item, index) => (
+                        <TimelineCard key={index} item={item} index={index} />
                     ))}
                 </div>
             </div>
+
+            {/* Progress Bar for this section */}
+            <motion.div
+                style={{ scaleX: scrollYProgress }}
+                className="fixed bottom-0 left-0 h-2 bg-lime-500 origin-left z-50 w-full"
+            />
         </section>
     );
 }
 
-export default About;
+// --- SUB-COMPONENT: INDIVIDUAL CARD ---
+function TimelineCard({ item, index }: { item: TimelineItem; index: number }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="group relative"
+        >
+            {/* 1. Big Year Number */}
+            {/* CHANGED: text-neutral-200 -> text-gray-300 for clearer visibility */}
+            <h3 className="text-6xl md:text-9xl font-black text-gray-300 group-hover:text-lime-500/40 transition-colors duration-500 select-none">
+                {item.year}
+            </h3>
+
+            {/* 2. Content Card */}
+            <div className="relative -mt-8 md:-mt-12 ml-4 md:ml-12 p-8 bg-white border border-neutral-200 shadow-[0_0_0_1px_rgba(0,0,0,0.02)] group-hover:shadow-[8px_8px_0px_0px_rgba(132,204,22,1)] group-hover:-translate-y-1 group-hover:-translate-x-1 transition-all duration-300">
+
+                {/* Title */}
+                <h4 className="text-2xl md:text-3xl font-bold uppercase tracking-tight mb-4 text-black">
+                    {item.title}
+                </h4>
+
+                {/* Description */}
+                {/* CHANGED: text-neutral-600 -> text-gray-800 for high readability */}
+                <p className="text-gray-800 leading-relaxed mb-6 font-mono text-sm md:text-base font-medium">
+                    {item.description}
+                </p>
+
+                {/* Tags */}
+                {item.tags && (
+                    <div className="flex flex-wrap gap-2">
+                        {item.tags.map((tag) => (
+                            <span
+                                key={tag}
+                                // CHANGED: text-neutral-500 -> text-gray-800
+                                className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-neutral-100 text-gray-800 rounded-full group-hover:bg-lime-50 group-hover:text-lime-700 transition-colors border border-transparent group-hover:border-lime-200"
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
+
+                {/* Decorative Corner Accent */}
+                <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-lime-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+
+            {/* 3. Connector Line (Mobile Only) */}
+            <div className="absolute left-0 top-20 bottom-0 w-px bg-neutral-200 md:hidden -z-10" />
+        </motion.div>
+    );
+}

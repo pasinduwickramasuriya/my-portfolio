@@ -5,7 +5,7 @@
 @import url('devicon/devicon.min.css');
 
 /* Added: Import JetBrains Mono from @fontsource for global font usage */
-@import url('@fontsource/jetbrains-mono');
+/* @import url('@fontsource/jetbrains-mono'); */
 
 /* Import Tailwind CSS and animations (unchanged) */
 @import "tailwindcss";

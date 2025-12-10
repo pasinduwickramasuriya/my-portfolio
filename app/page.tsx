@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="relative">
       {/* Updated background to #0a1128 for consistency with Footer.tsx */}
-      <StarsCanvas />
+      {/* <StarsCanvas /> */}
       <div className="space-y-16 sm:space-y-24 relative z-10 px-4 sm:px-6 lg:px-8">
         {/* Added responsive padding to match Skills.tsx, Work.tsx, etc. */}
         <motion.div

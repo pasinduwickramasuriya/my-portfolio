@@ -1,7 +1,12 @@
+
+
+
+
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Skill {
     name: string;
@@ -13,175 +18,134 @@ interface Categories {
     [key: string]: Skill[];
 }
 
-interface SkillsProps {
-    categories?: Categories;
-    headerTitle?: string;
-    headerDescription?: string;
-}
-
 const defaultCategories: Categories = {
     Frontend: [
-        {
-            name: "Next.js",
-            icon: "devicon-nextjs-plain",
-            description: "Building server-rendered React applications",
-        },
-        {
-            name: "React",
-            icon: "devicon-react-original colored",
-            description: "Creating dynamic user interfaces",
-        },
-        {
-            name: "TypeScript",
-            icon: "devicon-typescript-plain colored",
-            description: "Adding type safety to JavaScript",
-        },
-        {
-            name: "Tailwind CSS",
-            icon: "devicon-tailwindcss-original colored",
-            description: "Crafting responsive and modern designs",
-        },
-        {
-            name: "Framer Motion",
-            icon: "devicon-framermotion-original",
-            description: "Implementing smooth animations",
-        },
+        { name: "Next.js", icon: "devicon-nextjs-plain", description: "App Router & SSR" },
+        { name: "React", icon: "devicon-react-original", description: "Component Architecture" },
+        { name: "TypeScript", icon: "devicon-typescript-plain", description: "Strict Typing" },
+        { name: "Tailwind", icon: "devicon-tailwindcss-original", description: "Utility-First CSS" },
+        { name: "Framer Motion", icon: "devicon-framermotion-original", description: "Complex Animations" },
     ],
     Backend: [
-        {
-            name: "Node.js",
-            icon: "devicon-nodejs-plain colored",
-            description: "Building scalable server-side applications",
-        },
-        {
-            name: "Express.js",
-            icon: "devicon-express-original",
-            description: "Creating robust APIs and backends",
-        },
-        {
-            name: "MongoDB",
-            icon: "devicon-mongodb-plain colored",
-            description: "Managing NoSQL databases",
-        },
+        { name: "Node.js", icon: "devicon-nodejs-plain", description: "Event-Driven Runtime" },
+        { name: "Express", icon: "devicon-express-original", description: "RESTful APIs" },
+        { name: "MongoDB", icon: "devicon-mongodb-plain", description: "NoSQL Schema Design" },
+        { name: "PostgreSQL", icon: "devicon-postgresql-plain", description: "Relational Data" },
     ],
     Tools: [
-        {
-            name: "Git & GitHub",
-            icon: "devicon-github-original",
-            description: "Version control and collaboration",
-        },
-        {
-            name: "VS Code",
-            icon: "devicon-vscode-plain colored",
-            description: "Efficient development environment",
-        },
-        {
-            name: "Figma",
-            icon: "fab fa-figma",
-            description: "Designing UI/UX prototypes",
-        },
+        { name: "Git", icon: "devicon-git-plain", description: "Version Control" },
+        { name: "Docker", icon: "devicon-docker-plain", description: "Containerization" },
+        { name: "Figma", icon: "devicon-figma-plain", description: "UI Prototyping" },
+        { name: "VS Code", icon: "devicon-vscode-plain", description: "IDE of Choice" },
     ],
 };
 
-function Skills({
-    categories = defaultCategories,
-    headerTitle = "Skills & Expertise",
-    headerDescription = "Technologies and tools I use to build modern web applications",
-}: SkillsProps) {
-    const [isVisible, setIsVisible] = useState(false);
-    const [activeCategory, setActiveCategory] = useState(
-        Object.keys(categories)[0]
-    );
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const element = document.getElementById("skills");
-            if (element) {
-                const { top } = element.getBoundingClientRect();
-                if (top < window.innerHeight * 0.75) {
-                    setIsVisible(true);
-                }
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        handleScroll();
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
+export default function Skills() {
+    const [activeTab, setActiveTab] = useState("Frontend");
 
     return (
-        <section
-            id="skills"
-            className="relative  py-16 sm:py-24 overflow-hidden min-h-screen"
-        >
-            <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="skills" className="relative bg-white py-24 md:py-32 overflow-hidden border-t border-neutral-100">
+            <div className="max-w-7xl mx-auto px-6">
+
+                {/* 1. Header & Tabs */}
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-20">
+
+                    {/* Title */}
+                    <div>
+                        <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase text-black mb-6">
+                            Tech <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-lime-500 to-lime-600">
+                                Stack
+                                <svg className="absolute w-full h-3 -bottom-2 left-0 text-lime-400 -z-10 opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                                </svg>
+                            </span>
+                        </h2>
+                        <p className="max-w-md text-neutral-700 font-medium text-sm md:text-base leading-relaxed border-l-4 border-lime-400 pl-6">
+                            My weapon of choice. A curated list of tools and technologies I use to build digital products.
+                        </p>
+                    </div>
+
+                    {/* Modern Tabs (Pill Shape) */}
+                    <div className="flex flex-wrap gap-3 bg-neutral-100 p-2 rounded-full border border-neutral-200">
+                        {Object.keys(defaultCategories).map((category) => (
+                            <button
+                                key={category}
+                                onClick={() => setActiveTab(category)}
+                                className={`
+                                    relative px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 z-10
+                                    ${activeTab === category ? "text-white" : "text-neutral-500 hover:text-black"}
+                                `}
+                            >
+                                {activeTab === category && (
+                                    <motion.div
+                                        layoutId="activeSkillTab"
+                                        className="absolute inset-0 bg-black rounded-full -z-10"
+                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                    />
+                                )}
+                                {category}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 2. The Skill Grid */}
                 <motion.div
-                    initial={{ opacity: 0, translateY: 4 }}
-                    animate={isVisible ? { opacity: 1, translateY: 0 } : {}}
-                    transition={{ duration: 0.7 }}
-                    className="text-center -mt-10 mb-12 sm:mb-16"
+                    layout
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
                 >
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                        {headerTitle}
-                    </h2>
-                    <div className="h-1 w-20 bg-blue-500 mx-auto rounded-full mb-4" />
-                    <p className="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto">
-                        {headerDescription}
-                    </p>
+                    <AnimatePresence mode="popLayout">
+                        {defaultCategories[activeTab].map((skill, index) => (
+                            <SkillCard key={skill.name} skill={skill} index={index} />
+                        ))}
+                    </AnimatePresence>
                 </motion.div>
 
-                <div className="flex flex-wrap justify-center mb-8 sm:mb-12 gap-2 sm:gap-4">
-                    {Object.keys(categories).map((category: string) => (
-                        <button
-                            key={category}
-                            onClick={() => setActiveCategory(category)}
-                            className={`px-4 sm:px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm sm:text-base ${activeCategory === category
-                                ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25"
-                                : "bg-gray-800/50 text-gray-400 hover:text-white"
-                                }`}
-                        >
-                            {category}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                    {categories[activeCategory]?.map((skill: Skill, index: number) => (
-                        <div
-                            key={skill.name}
-                            className={`group p-4 sm:p-6 rounded-xl bg-gray-800/30 backdrop-blur-sm border border-gray-700/50
-                hover:border-blue-500/50 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10
-                ${isVisible
-                                    ? "opacity-100 translate-y-0"
-                                    : "opacity-0 translate-y-4"
-                                }`}
-                            style={{ transitionDelay: `${index * 100}ms` }}
-                        >
-                            <div className="flex items-center gap-3 sm:gap-4">
-                                <div className="relative w-10 sm:w-12 h-10 sm:h-12 rounded-lg bg-blue-500/20 flex items-center justify-center overflow-hidden">
-                                    <i
-                                        className={`${skill.icon} text-lg sm:text-2xl text-blue-400 group-hover:text-blue-300 transition-all duration-300 transform group-hover:scale-110`}
-                                    ></i>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg sm:text-xl font-semibold text-white group-hover:text-blue-300 transition-colors">
-                                        {skill.name}
-                                    </h3>
-                                    <p className="text-sm sm:text-base text-gray-400 group-hover:text-gray-300 transition-colors">
-                                        {skill.description}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
             </div>
         </section>
     );
 }
 
-export default Skills;
+// --- SUB-COMPONENT: SKILL CARD ---
+function SkillCard({ skill, index }: { skill: Skill; index: number }) {
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+                delay: index * 0.05
+            }}
+            className="group relative bg-neutral-50 h-56 rounded-[2rem] border-2 border-transparent hover:border-black hover:bg-white transition-all duration-300 flex flex-col justify-between p-8 overflow-hidden cursor-default hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+        >
+            {/* Background Decor (Lime Blob) */}
+            <div className="absolute -right-10 -top-10 w-32 h-32 bg-lime-200/50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            {/* Top: Icon */}
+            <div className="relative z-10 w-14 h-14 flex items-center justify-center bg-white rounded-2xl border border-neutral-200 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                <i className={`${skill.icon} text-4xl`}></i>
+            </div>
+
+            {/* Bottom: Text */}
+            <div className="relative z-10">
+                <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-xl font-black uppercase tracking-tight text-black">
+                        {skill.name}
+                    </h3>
+                    {/* Tiny Arrow */}
+                    <svg className="w-5 h-5 text-neutral-300 group-hover:text-lime-500 transform group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
+                </div>
+
+                <p className="text-xs font-bold text-neutral-500 uppercase tracking-wide group-hover:text-black transition-colors">
+                    {skill.description}
+                </p>
+            </div>
+        </motion.div>
+    );
+}

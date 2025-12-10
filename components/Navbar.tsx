@@ -1,17 +1,15 @@
-
 "use client";
 
-import { useState } from "react";
-import { motion, Variants } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-// Define constants within the file
+// --- CONSTANTS ---
 const NAV_LINKS = [
     { title: "Home", link: "#home" },
     { title: "About", link: "#about" },
     { title: "Services", link: "#services" },
-    { title: "Skills", link: "#skills" },
     { title: "Work", link: "#work" },
     { title: "Contact", link: "#contact" },
 ];
@@ -43,237 +41,230 @@ const SOCIALS = [
     },
 ];
 
-// Define variants with correct typing
-const linkVariants: Variants = {
-    hidden: { opacity: 0, y: 6 },
-    visible: (i: number) => ({
+// --- ADVANCED ANIMATIONS ---
+const navContainerVars: Variants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
         opacity: 1,
         y: 0,
         transition: {
-            delay: i * 0.06,
-            duration: 0.2,
-            ease: "easeOut",
-        },
-    }),
-};
-
-const socialVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.6 },
-    visible: (i: number) => ({
-        opacity: 1,
-        scale: 1,
-        transition: {
-            delay: 0.15 + i * 0.06,
-            duration: 0.2,
-            ease: "easeOut",
-        },
-    }),
-};
-
-// Added: Define overlay variants for background blur animation
-const overlayVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            duration: 0.25,
-            ease: "easeOut",
+            duration: 0.5,
+            ease: "circOut",
+            staggerChildren: 0.1,
         },
     },
 };
 
+const navItemVars: Variants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0 },
+};
+
+const mobileMenuVars: Variants = {
+    initial: { clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
+    animate: {
+        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+        transition: { duration: 0.6, ease: [0.87, 0, 0.13, 1] } // Custom bezier for snappy feel
+    },
+    exit: {
+        clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
+        transition: { duration: 0.6, ease: [0.87, 0, 0.13, 1] }
+    }
+};
+
+const mobileLinkVars: Variants = {
+    initial: { y: 40, opacity: 0, rotate: 5 },
+    open: {
+        y: 0,
+        opacity: 1,
+        rotate: 0,
+        transition: { ease: "easeOut", duration: 0.4 }
+    }
+};
+
+const containerVars: Variants = {
+    initial: { transition: { staggerChildren: 0.05, staggerDirection: -1 } },
+    open: { transition: { delayChildren: 0.2, staggerChildren: 0.1 } }
+};
+
 export function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 30);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
     return (
         <>
-            {/* Added: Full-screen overlay for background blur when mobile menu is open */}
-            {isMobileMenuOpen && (
-                <motion.div
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    variants={overlayVariants}
-                    className="fixed inset-0 bg-transparent backdrop-blur-md z-40"
-                    onClick={() => setIsMobileMenuOpen(false)} // Added: Close menu when clicking overlay
-                />
-            )}
             <motion.nav
-                initial={{ y: -50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="fixed top-0 w-full bg-background/10 backdrop-blur-md z-50 px-4 sm:px-5 lg:px-7 h-[64px]  shadow-primary/10"
+                initial="hidden"
+                animate="visible"
+                variants={navContainerVars}
+                className={`fixed top-0 w-full z-50 h-[80px] transition-all duration-500 ${scrolled || isMobileMenuOpen
+                    ? "bg-white/90 backdrop-blur-xl border-b border-neutral-200 shadow-sm"
+                    : "bg-transparent"
+                    }`}
             >
-                {/* Navbar Container */}
-                <div className="max-w-5xl mx-auto h-full flex items-center justify-between ">
-                    {/* Logo + Name */}
-                    <Link href="#home" className="flex items-center group">
-                        <span className="font-semibold text-lg lg:text-base lg:text-lg text-foreground ml-1.5 bg-gradient-to-r from-primary via-blue-500 to-accent bg-clip-text text-transparent group-hover:scale-105 transition-transform">
-                            Pasindu.dev
-                        </span>
+                <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
+
+                    {/* --- LOGO (Animated Hover) --- */}
+                    <Link href="#home" className="group relative z-50">
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="font-black text-2xl tracking-tighter text-black uppercase flex items-center gap-1"
+                        >
+                            Pasindu
+                            <motion.span
+                                animate={{ rotate: [0, 10, 0] }}
+                                transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
+                                className="text-lime-500 text-3xl leading-none"
+                            >
+                                .
+                            </motion.span>
+                            <span className="text-lime-500 font-bold text-lg group-hover:underline decoration-2 underline-offset-4 transition-all">dev</span>
+                        </motion.div>
                     </Link>
 
-                    {/* Web Navbar */}
-                    <div className="hidden md:flex w-[500px] items-center justify-center">
-                        <div
-                            className="flex items-center justify-between w-full px-3 py-1 rounded-full"
-                            style={{
-                                background: "conic-gradient(from 0deg, rgba(59, 130, 246, 0.1), rgba(96, 165, 250, 0.1), rgba(96, 165, 250, 0.1), transparent)",
-                                border: "1px solid rgba(59, 130, 246, 0.2)",
-                                boxShadow: "0 2px 8px rgba(59, 130, 246, 0.05)",
-                            }}
+                    {/* --- DESKTOP NAV (The "Pill" Container) --- */}
+                    <div className="hidden md:flex items-center gap-8">
+                        <motion.div
+                            className="relative flex items-center px-2 py-2 rounded-full border border-neutral-200 bg-white/50 backdrop-blur-md shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)]"
                         >
                             {NAV_LINKS.map((link, index) => (
-                                <motion.div
-                                    key={link.title}
-                                    custom={index}
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={linkVariants}
-                                >
-                                    <Button
-                                        variant="ghost"
-                                        asChild
-                                        className="text-foreground text-sm hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full px-2.5 py-0.5"
-                                    >
-                                        <Link href={link.link}>{link.title}</Link>
-                                    </Button>
-                                </motion.div>
-                            ))}
-                            <motion.div
-                                custom={NAV_LINKS.length}
-                                initial="hidden"
-                                animate="visible"
-                                variants={linkVariants}
-                            >
-                                <Button
-                                    variant="ghost"
-                                    asChild
-                                    className="text-foreground text-sm hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full px-2.5 py-0.5"
-                                >
-                                    <Link href={LINKS.sourceCode} target="_blank" rel="noreferrer noopener">
-                                        Source
-                                    </Link>
-                                </Button>
-                            </motion.div>
-                        </div>
-                    </div>
-
-                    {/* Social Icons (Web) */}
-                    <div className="hidden md:flex flex-row gap-2.5">
-                        {SOCIALS.map(({ link, name, icon: Icon }, index) => (
-                            <motion.div
-                                key={name}
-                                custom={index}
-                                initial="hidden"
-                                animate="visible"
-                                variants={socialVariants}
-                            >
                                 <Link
-                                    href={link}
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                    className="text-foreground hover:text-blue-500 transition-all duration-200 hover:scale-125"
-                                >
-                                    <Icon className="h-5 w-5" />
-                                </Link>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* Hamburger Menu */}
-                    <Button
-                        variant="ghost"
-                        className="md:hidden text-foreground text-2xl focus:outline-none hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full p-2" // Changed: Updated hover:text-pink-300 to hover:text-blue-500 for consistency with blue color scheme
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    >
-                        ☰
-                    </Button>
-                </div>
-
-                {/* Mobile Menu */}
-                {isMobileMenuOpen && (
-                    <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                        className=" absolute top-[64px] left-0 w-full bg-background/90 backdrop-blur-md p-3 flex flex-col items-center md:hidden z-50" // Added: Explicit z-50 to ensure mobile menu is above overlay
-                    >
-                        {/* Logo + Name in Mobile Menu */}
-                        <div className="flex items-center justify-center mb-3">
-                            <span className="font-semibold text-base text-foreground ml-1.5 bg-gradient-to-r from-primary via-blue-500 to-accent bg-clip-text text-transparent">
-                                Pasindu.dev
-                            </span>
-                        </div>
-
-                        {/* Links */}
-                        <div className=" flex flex-col items-center gap-1.5 w-full">
-                            {NAV_LINKS.map((link, index) => (
-                                <motion.div
                                     key={link.title}
-                                    custom={index}
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={linkVariants}
-                                    className="w-full"
+                                    href={link.link}
+                                    onMouseEnter={() => setHoveredIndex(index)}
+                                    onMouseLeave={() => setHoveredIndex(null)}
+                                    className="relative px-5 py-2 text-sm font-bold uppercase tracking-wide text-neutral-600 hover:text-black transition-colors z-10"
                                 >
-                                    <Button
-                                        variant="ghost"
-                                        asChild
-                                        className="w-full text-red-500 text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5"
+                                    {/* The Text */}
+                                    {link.title}
 
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        <Link href={link.link}>{link.title}</Link>
-                                    </Button>
-                                </motion.div>
+                                    {/* The Floating Background Pill */}
+                                    {hoveredIndex === index && (
+                                        <motion.div
+                                            layoutId="navbar-hover"
+                                            className="absolute inset-0 bg-neutral-100 rounded-full -z-10"
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                </Link>
                             ))}
-                            <motion.div
-                                custom={NAV_LINKS.length}
-                                initial="hidden"
-                                animate="visible"
-                                variants={linkVariants}
-                                className="w-full"
-                            >
-                                <Button
-                                    variant="ghost"
-                                    asChild
-                                    // className=" w-full text-foreground text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5" 
-                                     className="w-full text-red-500 text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    <Link href={LINKS.sourceCode} target="_blank" rel="noreferrer noopener">
-                                        Source
-                                    </Link>
-                                </Button>
-                            </motion.div>
-                        </div>
+                        </motion.div>
 
-                        {/* Social Icons */}
-                        <div className="flex justify-center gap-4 mt-3">
-                            {SOCIALS.map(({ link, name, icon: Icon }, index) => (
-                                <motion.div
-                                    key={name}
-                                    custom={index}
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={socialVariants}
-                                >
+                        {/* Desktop Socials & CTA */}
+                        <div className="flex items-center gap-4">
+                            {SOCIALS.map(({ link, icon: Icon }, i) => (
+                                <motion.div key={i} variants={navItemVars} whileHover={{ y: -3 }}>
                                     <Link
                                         href={link}
                                         target="_blank"
-                                        rel="noreferrer noopener"
-                                        // className="text-foreground hover:text-blue-500 transition-all duration-200 hover:scale-125"
-                                         className="w-full text-red-500 text-base hover:bg-primary/10 hover:text-blue-500 transition-all duration-200 rounded-full py-0.5"
+                                        className="text-neutral-400 hover:text-black transition-colors"
                                     >
-                                        <Icon className="h-6 w-6" />
+                                        <Icon className="w-5 h-5" />
                                     </Link>
                                 </motion.div>
                             ))}
+                            <motion.div variants={navItemVars}>
+                                <Button
+                                    asChild
+                                    variant="outline"
+                                    className="border-2 border-black bg-transparent text-black hover:bg-black hover:text-white rounded-full px-6 py-5 uppercase font-bold text-xs tracking-widest transition-all duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                                >
+                                    <Link href={LINKS.sourceCode} target="_blank">Source</Link>
+                                </Button>
+                            </motion.div>
                         </div>
+                    </div>
+
+                    {/* --- MOBILE HAMBURGER (Animated) --- */}
+                    <button
+                        onClick={toggleMenu}
+                        className="md:hidden relative z-50 flex flex-col justify-center gap-1.5 p-2 w-10 h-10 group"
+                    >
+                        <motion.span
+                            animate={isMobileMenuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+                            className="block w-8 h-0.5 bg-black origin-center transition-all duration-300"
+                        />
+                        <motion.span
+                            animate={isMobileMenuOpen ? { opacity: 0 } : { opacity: 1 }}
+                            className="block w-8 h-0.5 bg-black transition-all duration-300"
+                        />
+                        <motion.span
+                            animate={isMobileMenuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+                            className="block w-6 group-hover:w-8 h-0.5 bg-black origin-center transition-all duration-300 ml-auto group-hover:ml-0"
+                        />
+                    </button>
+                </div>
+            </motion.nav>
+
+            {/* --- FULL SCREEN MOBILE MENU --- */}
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        variants={mobileMenuVars}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        className="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center"
+                    >
+                        {/* Decorative Background Pattern */}
+                        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-50 pointer-events-none" />
+
+                        <motion.div
+                            variants={containerVars}
+                            initial="initial"
+                            animate="open"
+                            exit="initial"
+                            className="flex flex-col gap-6 text-center relative z-10"
+                        >
+                            {NAV_LINKS.map((link) => (
+                                <div key={link.title} className="overflow-hidden">
+                                    <motion.div variants={mobileLinkVars}>
+                                        <Link
+                                            href={link.link}
+                                            onClick={toggleMenu}
+                                            className="group relative text-6xl font-black text-black uppercase tracking-tighter transition-colors hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-lime-500 hover:to-lime-600"
+                                        >
+                                            {link.title}
+                                            {/* Hover underline */}
+                                            <span className="absolute -bottom-2 left-0 w-0 h-2 bg-lime-500 transition-all duration-300 group-hover:w-full" />
+                                        </Link>
+                                    </motion.div>
+                                </div>
+                            ))}
+
+                            {/* Mobile Socials */}
+                            <div className="overflow-hidden mt-8">
+                                <motion.div variants={mobileLinkVars} className="flex gap-8 justify-center">
+                                    {SOCIALS.map(({ link, icon: Icon }, i) => (
+                                        <Link key={i} href={link} target="_blank" className="text-neutral-400 hover:text-lime-500 transition-colors transform hover:scale-125 duration-300">
+                                            <Icon className="w-8 h-8" />
+                                        </Link>
+                                    ))}
+                                </motion.div>
+                            </div>
+                        </motion.div>
+
+                        {/* Footer Info in Menu */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1, transition: { delay: 0.5 } }}
+                            className="absolute bottom-10 text-neutral-400 text-xs font-mono uppercase tracking-widest"
+                        >
+                            Pasindu.dev © 2025
+                        </motion.div>
                     </motion.div>
                 )}
-            </motion.nav>
+            </AnimatePresence>
         </>
     );
 }
