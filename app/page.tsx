@@ -18,50 +18,49 @@ export default function Home() {
       <div className="space-y-16 sm:space-y-24 relative z-10 px-4 sm:px-6 lg:px-8">
         {/* Added responsive padding to match Skills.tsx, Work.tsx, etc. */}
         <motion.div
-          initial={{ opacity: 0, translateY: 4 }}
+          initial={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.7 }}
-        // Changed y to translateY for consistency with Skills.tsx animations
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <Hero />
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, translateY: 4 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-        // Changed y to translateY and adjusted duration to 0.7 for uniformity
+          initial={{ opacity: 0, translateY: 40 }}
+          whileInView={{ opacity: 1, translateY: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <About />
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, translateY: 4 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-        // Changed y to translateY and adjusted duration
+          initial={{ opacity: 0, translateY: 40 }}
+          whileInView={{ opacity: 1, translateY: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <Services />
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, translateY: 4 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
-        // Changed y to translateY and adjusted duration
+          initial={{ opacity: 0, translateY: 40 }}
+          whileInView={{ opacity: 1, translateY: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <Skills />
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, translateY: 4 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.7, delay: 0.8 }}
-        // Changed y to translateY and adjusted duration
+          initial={{ opacity: 0, translateY: 40 }}
+          whileInView={{ opacity: 1, translateY: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <Work />
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, translateY: 4 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ duration: 0.7, delay: 1.0 }}
-        // Changed y to translateY and adjusted duration
+          initial={{ opacity: 0, translateY: 40 }}
+          whileInView={{ opacity: 1, translateY: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <Contact />
         </motion.div>

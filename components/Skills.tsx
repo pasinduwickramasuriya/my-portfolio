@@ -112,7 +112,8 @@ function SkillCard({ skill, index }: { skill: Skill; index: number }) {
         <motion.div
             layout
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{
                 type: "spring",

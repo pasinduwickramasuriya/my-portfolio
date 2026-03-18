@@ -4,6 +4,7 @@ import './globals.css';
 import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MascotRobot from '@/components/MascotRobot';
+import SmoothScroll from '@/components/SmoothScroll';
 
 
 export const metadata = {
@@ -20,11 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-mono"> {/* Changed: Removed inter.className, added font-mono to use JetBrains Mono */}
-        {/* Ensured Navbar and Footer are included for consistent layout */}
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <MascotRobot />
-        <Footer />
+        <SmoothScroll>
+          {/* Ensured Navbar and Footer are included for consistent layout */}
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <MascotRobot />
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );
