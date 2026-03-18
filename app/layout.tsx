@@ -5,6 +5,7 @@ import { Navbar } from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import MascotRobot from '@/components/MascotRobot';
 import SmoothScroll from '@/components/SmoothScroll';
+import CustomCursor from '@/components/CustomCursor';
 
 
 export const metadata = {
@@ -20,7 +21,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-mono"> {/* Changed: Removed inter.className, added font-mono to use JetBrains Mono */}
+      <body className="font-mono cursor-none"> {/* Added cursor-none to hide default cursor */}
+        <CustomCursor />
         <SmoothScroll>
           {/* Ensured Navbar and Footer are included for consistent layout */}
           <Navbar />

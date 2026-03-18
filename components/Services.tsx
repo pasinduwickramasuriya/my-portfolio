@@ -53,19 +53,26 @@ export default function Services() {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     return (
-        <section id="services" className="relative bg-white py-24 md:py-32 overflow-hidden border-t border-neutral-100">
+        <section id="services" className="relative bg-white py-24 md:py-32 overflow-hidden">
 
             {/* 1. Header Section */}
             <div className="max-w-7xl mx-auto px-6 mb-24">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-50px" }}
+                    variants={{
+                        visible: { transition: { staggerChildren: 0.1 } },
+                        hidden: {}
+                    }}
                     className="flex flex-col md:flex-row md:items-end justify-between gap-8"
                 >
-                    <div>
-                        <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase text-black mb-4">
+                    <div className="overflow-hidden">
+                        <motion.h2 
+                            variants={{ hidden: { y: "100%" }, visible: { y: 0 } }}
+                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-6xl md:text-8xl font-black tracking-tighter uppercase text-black mb-4 pb-2"
+                        >
                             My <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-lime-500 to-lime-600 z-10">
                                 Expertise
                                 {/* Decorative underline */}
@@ -73,11 +80,13 @@ export default function Services() {
                                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
                                 </svg>
                             </span>
-                        </h2>
+                        </motion.h2>
                     </div>
-                    <p className="max-w-md text-neutral-700 font-medium text-base md:text-lg leading-relaxed border-l-4 border-lime-400 pl-6">
-                        I combine technical precision with design thinking to build scalable, human-centered digital products.
-                    </p>
+                    <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+                        <p className="max-w-md text-neutral-700 font-medium text-base md:text-lg leading-relaxed border-l-4 border-lime-400 pl-6">
+                            I combine technical precision with design thinking to build scalable, human-centered digital products.
+                        </p>
+                    </motion.div>
                 </motion.div>
             </div>
 
@@ -151,12 +160,12 @@ function ServiceCard({
             // Rounded-3xl (approx 24px) or Rounded-[2.5rem] (40px) for that super modern look
             className={`
                 group relative h-[360px] p-8 md:p-10 flex flex-col justify-between 
-                bg-white border-2 rounded-[2.5rem] transition-all duration-500 ease-out cursor-default
+                bg-white rounded-[2.5rem] transition-all duration-500 ease-out cursor-default
                 ${isHovered
-                    ? "border-black shadow-[0px_20px_40px_-15px_rgba(0,0,0,0.1)] -translate-y-2 z-10"
-                    : "border-neutral-100 hover:border-neutral-200"
+                    ? "shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] -translate-y-2 z-20"
+                    : "shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
                 }
-                ${isBlur ? "opacity-50 blur-[2px] scale-95" : "opacity-100 scale-100 blur-0"}
+                ${isBlur ? "opacity-40 blur-[4px] scale-[0.98]" : "opacity-100 scale-100 blur-0"}
             `}
         >
             {/* Background Hover Gradient (Subtle) */}
@@ -169,7 +178,7 @@ function ServiceCard({
                 </span>
 
                 {/* Arrow Icon that rotates on hover */}
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isHovered ? "bg-lime-400 border-lime-400 rotate-45" : "bg-white border-neutral-100"}`}>
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 shadow-sm ${isHovered ? "bg-lime-400 rotate-45 shadow-[0_0_20px_rgba(132,204,22,0.4)]" : "bg-neutral-50"}`}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={isHovered ? "text-black" : "text-black"}>
                         <line x1="7" y1="17" x2="17" y2="7"></line>
                         <polyline points="7 7 17 7 17 17"></polyline>
@@ -190,7 +199,7 @@ function ServiceCard({
                 {/* Features (Pills) - Fully Rounded */}
                 <div className="flex flex-wrap gap-2">
                     {service.features.map(f => (
-                        <span key={f} className={`text-xs font-bold uppercase tracking-wide px-4 py-2 rounded-full border transition-colors duration-300 ${isHovered ? "bg-black border-black text-white" : "bg-neutral-50 border-neutral-100 text-neutral-500"}`}>
+                        <span key={f} className={`text-xs font-bold uppercase tracking-wide px-4 py-2 rounded-full transition-colors duration-500 ${isHovered ? "bg-black text-white" : "bg-neutral-50 text-neutral-500"}`}>
                             {f}
                         </span>
                     ))}

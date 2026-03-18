@@ -14,6 +14,7 @@ import {
 } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import TypewriterComponent from "typewriter-effect";
+import Magnetic from "@/components/Magnetic";
 
 interface HeroProps {
     name?: string;
@@ -70,8 +71,18 @@ export default function Hero({
     imageSrc = "/pp1.png",
 }: HeroProps) {
 
+    const containerRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end start"]
+    });
+
+    // Make the hero image parallax slightly upwards while shrinking
+    const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+    const imageScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
+
     return (
-        <section className="relative h-screen w-full bg-white overflow-hidden flex flex-col justify-end">
+        <section ref={containerRef} className="relative h-screen w-full bg-white overflow-hidden flex flex-col justify-end">
 
             {/* BACKGROUND GRID (Darker gray for visibility on white) */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
@@ -90,31 +101,27 @@ export default function Hero({
 
             {/* LAYER 2: THE FULL IMAGE */}
             <motion.div
-                initial={{ y: 100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+                style={{ y: imageY, scale: imageScale }}
+                initial={{ opacity: 0, translateY: 100 }}
+                animate={{ opacity: 1, translateY: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                // UPDATED CLASS:
-                // h-[60vh] (Mobile) vs md:h-[90vh] (Desktop) -> Prevents image from being too huge on phones
-                // pb-24 (Mobile) -> Pushes image up so it looks centered above the buttons
-                // items-end -> Anchors image to the bottom of this defined height
                 className="relative z-10 w-full h-[60vh] md:h-[90vh] flex items-end justify-center pointer-events-none pb-24 md:pb-0"
             >
                 <img
                     src={imageSrc}
                     alt="Pasindu"
-                    // Removed grayscale to make it pop on white, or keep it if you prefer the style
                     className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] grayscale hover:grayscale-0 transition-all duration-700 ease-out"
                 />
 
-                {/* Gradient fade - Changed to WHITE to blend into the floor */}
-                <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
+                {/* Gradient fade - White to blend into the floor */}
+                <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
             </motion.div>
 
             {/* LAYER 3: FOREGROUND CONTENT */}
             <div className="absolute bottom-10 left-0 w-full z-20 flex flex-col items-center gap-6 pb-8">
 
                 {/* Glass Box - Light Mode */}
-                <div className="bg-white/60 backdrop-blur-md border border-black/5 px-6 py-4 rounded-xl text-center shadow-lg">
+                <div className="bg-white/80 backdrop-blur-xl px-8 py-5 rounded-2xl text-center shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
                     <TypewriterComponent
                         options={{
                             strings: ["Frontend Engineer", "UI/UX Designer", "Fullstack Developer"],
@@ -126,11 +133,13 @@ export default function Hero({
                     />
                 </div>
 
-                <Button
-                    className="rounded-full bg-lime-400 text-black hover:bg-lime-500 font-bold text-lg px-8 py-6 transition-transform hover:scale-105 shadow-xl shadow-lime-400/20"
-                >
-                    <a href="#contact">Let's Create Magic</a>
-                </Button>
+                <Magnetic intensity={0.2}>
+                    <Button
+                        className="rounded-full bg-lime-400 text-black hover:bg-lime-500 font-bold text-lg px-8 py-6 transition-transform hover:scale-105 shadow-xl shadow-lime-400/20"
+                    >
+                        <a href="#contact">Let's Create Magic</a>
+                    </Button>
+                </Magnetic>
             </div>
 
         </section>

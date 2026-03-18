@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Magnetic from "@/components/Magnetic";
 
 // --- CONSTANTS ---
 const NAV_LINKS = [
@@ -13,10 +13,6 @@ const NAV_LINKS = [
     { title: "Work", link: "#work" },
     { title: "Contact", link: "#contact" },
 ];
-
-const LINKS = {
-    sourceCode: "https://github.com/pasinduwickramasuriya",
-};
 
 const SOCIALS = [
     {
@@ -61,30 +57,33 @@ const navItemVars: Variants = {
 };
 
 const mobileMenuVars: Variants = {
-    initial: { clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
+    initial: { 
+        clipPath: "circle(0% at top right)",
+    },
     animate: {
-        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-        transition: { duration: 0.6, ease: [0.87, 0, 0.13, 1] } // Custom bezier for snappy feel
+        clipPath: "circle(150% at top right)",
+        transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } // Webflow-style explosive circular reveal
     },
     exit: {
-        clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)",
-        transition: { duration: 0.6, ease: [0.87, 0, 0.13, 1] }
+        clipPath: "circle(0% at top right)",
+        transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] }
     }
 };
 
 const mobileLinkVars: Variants = {
-    initial: { y: 40, opacity: 0, rotate: 5 },
+    initial: { y: 60, opacity: 0, rotate: 5, scale: 0.9 },
     open: {
         y: 0,
         opacity: 1,
         rotate: 0,
-        transition: { ease: "easeOut", duration: 0.4 }
+        scale: 1,
+        transition: { ease: [0.16, 1, 0.3, 1], duration: 0.8 } // Deep ease out
     }
 };
 
 const containerVars: Variants = {
     initial: { transition: { staggerChildren: 0.05, staggerDirection: -1 } },
-    open: { transition: { delayChildren: 0.2, staggerChildren: 0.1 } }
+    open: { transition: { delayChildren: 0.3, staggerChildren: 0.1 } }
 };
 
 export function Navbar() {
@@ -106,103 +105,55 @@ export function Navbar() {
                 initial="hidden"
                 animate="visible"
                 variants={navContainerVars}
-                className={`fixed top-0 w-full z-50 h-[80px] transition-all duration-500 ${scrolled || isMobileMenuOpen
-                    ? "bg-white/90 backdrop-blur-xl border-b border-neutral-200 shadow-sm"
-                    : "bg-transparent"
-                    }`}
+                className="fixed top-0 w-full z-50 transition-all duration-500 py-6 pointer-events-none"
             >
-                <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
+                <div className="max-w-[95%] mx-auto px-4 md:px-8 flex items-center justify-between">
 
                     {/* --- LOGO (Animated Hover) --- */}
-                    <Link href="#home" className="group relative z-50">
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="font-black text-2xl tracking-tighter text-black uppercase flex items-center gap-1"
-                        >
-                            Pasindu
-                            <motion.span
-                                animate={{ rotate: [0, 10, 0] }}
-                                transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
-                                className="text-lime-500 text-3xl leading-none"
+                    <div className="pointer-events-auto bg-white/60 backdrop-blur-lg px-4 py-2 rounded-full shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-white/40">
+                        <Link href="#home" className="group relative z-50">
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="font-black text-2xl tracking-tighter text-black uppercase flex items-center gap-1"
                             >
-                                .
-                            </motion.span>
-                            <span className="text-lime-500 font-bold text-lg group-hover:underline decoration-2 underline-offset-4 transition-all">dev</span>
-                        </motion.div>
-                    </Link>
-
-                    {/* --- DESKTOP NAV (The "Pill" Container) --- */}
-                    <div className="hidden md:flex items-center gap-8">
-                        <motion.div
-                            className="relative flex items-center px-2 py-2 rounded-full border border-neutral-200 bg-white/50 backdrop-blur-md shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)]"
-                        >
-                            {NAV_LINKS.map((link, index) => (
-                                <Link
-                                    key={link.title}
-                                    href={link.link}
-                                    onMouseEnter={() => setHoveredIndex(index)}
-                                    onMouseLeave={() => setHoveredIndex(null)}
-                                    className="relative px-5 py-2 text-sm font-bold uppercase tracking-wide text-neutral-600 hover:text-black transition-colors z-10"
+                                Pasindu
+                                <motion.span
+                                    animate={{ rotate: [0, 10, 0] }}
+                                    transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
+                                    className="text-lime-500 text-3xl leading-none"
                                 >
-                                    {/* The Text */}
-                                    {link.title}
-
-                                    {/* The Floating Background Pill */}
-                                    {hoveredIndex === index && (
-                                        <motion.div
-                                            layoutId="navbar-hover"
-                                            className="absolute inset-0 bg-neutral-100 rounded-full -z-10"
-                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                        />
-                                    )}
-                                </Link>
-                            ))}
-                        </motion.div>
-
-                        {/* Desktop Socials & CTA */}
-                        <div className="flex items-center gap-4">
-                            {SOCIALS.map(({ link, icon: Icon }, i) => (
-                                <motion.div key={i} variants={navItemVars} whileHover={{ y: -3 }}>
-                                    <Link
-                                        href={link}
-                                        target="_blank"
-                                        className="text-neutral-400 hover:text-black transition-colors"
-                                    >
-                                        <Icon className="w-5 h-5" />
-                                    </Link>
-                                </motion.div>
-                            ))}
-                            <motion.div variants={navItemVars}>
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    className="border-2 border-black bg-transparent text-black hover:bg-black hover:text-white rounded-full px-6 py-5 uppercase font-bold text-xs tracking-widest transition-all duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
-                                >
-                                    <Link href={LINKS.sourceCode} target="_blank">Source</Link>
-                                </Button>
+                                    .
+                                </motion.span>
+                                <span className="text-lime-500 font-bold text-lg">dev</span>
                             </motion.div>
-                        </div>
+                        </Link>
                     </div>
 
-                    {/* --- MOBILE HAMBURGER (Animated) --- */}
-                    <button
-                        onClick={toggleMenu}
-                        className="md:hidden relative z-50 flex flex-col justify-center gap-1.5 p-2 w-10 h-10 group"
-                    >
-                        <motion.span
-                            animate={isMobileMenuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-                            className="block w-8 h-0.5 bg-black origin-center transition-all duration-300"
-                        />
-                        <motion.span
-                            animate={isMobileMenuOpen ? { opacity: 0 } : { opacity: 1 }}
-                            className="block w-8 h-0.5 bg-black transition-all duration-300"
-                        />
-                        <motion.span
-                            animate={isMobileMenuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-                            className="block w-6 group-hover:w-8 h-0.5 bg-black origin-center transition-all duration-300 ml-auto group-hover:ml-0"
-                        />
-                    </button>
+                    {/* --- UNIVERSAL HAMBURGER BUTTON (Magnetic) --- */}
+                    <div className="pointer-events-auto bg-white/60 backdrop-blur-lg p-2 rounded-full shadow-[0_4px_20px_rgb(0,0,0,0.05)] border border-white/40">
+                        <Magnetic intensity={0.2}>
+                            <button
+                                onClick={toggleMenu}
+                                className="relative z-50 flex items-center justify-center p-4 rounded-full bg-neutral-900 border-none group hover:bg-black transition-colors shadow-[0_8px_30px_rgb(0,0,0,0.1)]"
+                            >
+                                <div className="relative flex flex-col justify-center gap-[6px] w-[24px] h-[24px]">
+                                    <motion.span
+                                        animate={isMobileMenuOpen ? { rotate: 45, y: 8, backgroundColor: "#fff" } : { rotate: 0, y: 0, backgroundColor: "#fff" }}
+                                        className="block w-full h-[2px] origin-center transition-all duration-300"
+                                    />
+                                    <motion.span
+                                        animate={isMobileMenuOpen ? { opacity: 0 } : { opacity: 1, backgroundColor: "#fff" }}
+                                        className="block w-full h-[2px] transition-all duration-300"
+                                    />
+                                    <motion.span
+                                        animate={isMobileMenuOpen ? { rotate: -45, y: -8, backgroundColor: "#fff" } : { rotate: 0, y: 0, backgroundColor: "#fff" }}
+                                        className="block w-[70%] group-hover:w-full h-[2px] origin-center transition-all duration-300 ml-[30%] group-hover:ml-0"
+                                    />
+                                </div>
+                            </button>
+                        </Magnetic>
+                    </div>
                 </div>
             </motion.nav>
 
@@ -224,31 +175,40 @@ export function Navbar() {
                             initial="initial"
                             animate="open"
                             exit="initial"
-                            className="flex flex-col gap-6 text-center relative z-10"
+                            className="flex flex-col gap-6 md:gap-8 text-center md:text-left relative z-10 w-full max-w-4xl px-8"
                         >
+                            <span className="text-neutral-400 font-bold uppercase tracking-[0.2em] text-sm mb-4">Navigation</span>
                             {NAV_LINKS.map((link) => (
                                 <div key={link.title} className="overflow-hidden">
                                     <motion.div variants={mobileLinkVars}>
                                         <Link
                                             href={link.link}
                                             onClick={toggleMenu}
-                                            className="group relative text-6xl font-black text-black uppercase tracking-tighter transition-colors hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-lime-500 hover:to-lime-600"
+                                            className="group relative inline-block text-6xl md:text-[8vw] leading-[0.9] font-black text-black uppercase tracking-tighter transition-colors"
                                         >
-                                            {link.title}
-                                            {/* Hover underline */}
-                                            <span className="absolute -bottom-2 left-0 w-0 h-2 bg-lime-500 transition-all duration-300 group-hover:w-full" />
+                                            <span className="relative z-10 group-hover:text-white transition-colors duration-500">{link.title}</span>
+                                            {/* Expansive Background shape filling behind text on hover */}
+                                            <span className="absolute inset-x-[-1rem] bottom-0 h-0 bg-black transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:h-full -z-0" />
                                         </Link>
                                     </motion.div>
                                 </div>
                             ))}
 
-                            {/* Mobile Socials */}
-                            <div className="overflow-hidden mt-8">
-                                <motion.div variants={mobileLinkVars} className="flex gap-8 justify-center">
-                                    {SOCIALS.map(({ link, icon: Icon }, i) => (
-                                        <Link key={i} href={link} target="_blank" className="text-neutral-400 hover:text-lime-500 transition-colors transform hover:scale-125 duration-300">
-                                            <Icon className="w-8 h-8" />
-                                        </Link>
+                            {/* Socials Divider */}
+                            <motion.div variants={mobileLinkVars} className="h-px w-full bg-neutral-200 my-8"></motion.div>
+
+                            {/* Massive Socials Row */}
+                            <div className="overflow-hidden">
+                                <motion.div variants={mobileLinkVars} className="flex gap-10 justify-center md:justify-start">
+                                    {SOCIALS.map(({ link, icon: Icon, name }, i) => (
+                                        <Magnetic key={i} intensity={0.2}>
+                                            <Link href={link} target="_blank" className="group flex items-center gap-3 text-neutral-500 hover:text-black transition-colors duration-500">
+                                                <div className="p-4 rounded-full bg-neutral-50 group-hover:bg-lime-400 group-hover:shadow-[0_0_30px_rgba(132,204,22,0.4)] transition-all duration-500">
+                                                    <Icon className="w-6 h-6" />
+                                                </div>
+                                                <span className="text-sm font-bold uppercase tracking-widest hidden md:inline">{name}</span>
+                                            </Link>
+                                        </Magnetic>
                                     ))}
                                 </motion.div>
                             </div>

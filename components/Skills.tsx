@@ -44,7 +44,7 @@ export default function Skills() {
     const [activeTab, setActiveTab] = useState("Frontend");
 
     return (
-        <section id="skills" className="relative bg-white py-24 md:py-32 overflow-hidden border-t border-neutral-100">
+        <section id="skills" className="relative bg-white py-24 md:py-32 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* 1. Header & Tabs */}
@@ -66,7 +66,7 @@ export default function Skills() {
                     </div>
 
                     {/* Modern Tabs (Pill Shape) */}
-                    <div className="flex flex-wrap gap-3 bg-neutral-100 p-2 rounded-full border border-neutral-200">
+                    <div className="flex flex-wrap gap-3 bg-neutral-50/50 p-2 rounded-full shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]">
                         {Object.keys(defaultCategories).map((category) => (
                             <button
                                 key={category}
@@ -121,13 +121,13 @@ function SkillCard({ skill, index }: { skill: Skill; index: number }) {
                 damping: 25,
                 delay: index * 0.05
             }}
-            className="group relative bg-neutral-50 h-56 rounded-[2rem] border-2 border-transparent hover:border-black hover:bg-white transition-all duration-300 flex flex-col justify-between p-8 overflow-hidden cursor-default hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+            className="group relative bg-white h-56 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgb(0,0,0,0.1)] hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between p-8 overflow-hidden cursor-default"
         >
             {/* Background Decor (Lime Blob) */}
             <div className="absolute -right-10 -top-10 w-32 h-32 bg-lime-200/50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             {/* Top: Icon */}
-            <div className="relative z-10 w-14 h-14 flex items-center justify-center bg-white rounded-2xl border border-neutral-200 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+            <div className="relative z-10 w-14 h-14 flex items-center justify-center bg-neutral-50 rounded-2xl shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
                 <i className={`${skill.icon} text-4xl`}></i>
             </div>
 

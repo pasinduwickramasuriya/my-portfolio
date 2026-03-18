@@ -52,18 +52,38 @@ export default function About() {
 
                 {/* --- LEFT COLUMN (STICKY HEADER) --- */}
                 <div className="w-full md:w-5/12 relative">
-                    <div className="sticky top-0 h-[30vh] md:h-screen flex flex-col justify-center px-6 md:px-12 py-12 md:py-0 border-r border-neutral-100">
+                    <div className="sticky top-0 h-[30vh] md:h-screen flex flex-col justify-center px-6 md:px-12 py-12 md:py-0 border-none">
 
                         {/* Animated Title */}
                         <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-100px" }}
+                            variants={{
+                                visible: { transition: { staggerChildren: 0.1 } },
+                                hidden: {}
+                            }}
                             className="relative z-10"
                         >
-                            <h2 className="text-[12vw] md:text-[8vw] leading-[0.8] font-black tracking-tighter uppercase text-black mb-4">
-                                About<br />
-                                <span className="text-lime-500">Me.</span>
+                            <h2 className="text-[12vw] md:text-[8vw] leading-[0.8] font-black tracking-tighter uppercase text-black mb-4 flex flex-col">
+                                <span className="overflow-hidden">
+                                     <motion.span 
+                                         variants={{ hidden: { y: "100%" }, visible: { y: 0 } }}
+                                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                         className="inline-block"
+                                     >
+                                         About
+                                     </motion.span>
+                                </span>
+                                <span className="overflow-hidden text-lime-500">
+                                     <motion.span 
+                                         variants={{ hidden: { y: "100%" }, visible: { y: 0 } }}
+                                         transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                                         className="inline-block pb-4"
+                                     >
+                                         Me.
+                                     </motion.span>
+                                </span>
                             </h2>
 
                             <div className="h-1 w-24 bg-black mt-6 mb-6" />
@@ -115,7 +135,7 @@ function TimelineCard({ item, index }: { item: TimelineItem; index: number }) {
             </h3>
 
             {/* 2. Content Card */}
-            <div className="relative -mt-8 md:-mt-12 ml-4 md:ml-12 p-8 bg-white border border-neutral-200 shadow-[0_0_0_1px_rgba(0,0,0,0.02)] group-hover:shadow-[8px_8px_0px_0px_rgba(132,204,22,1)] group-hover:-translate-y-1 group-hover:-translate-x-1 transition-all duration-300">
+            <div className="relative -mt-8 md:-mt-12 ml-4 md:ml-12 p-8 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgb(0,0,0,0.1)] group-hover:-translate-y-1 transition-all duration-500 rounded-3xl">
 
                 {/* Title */}
                 <h4 className="text-2xl md:text-3xl font-bold uppercase tracking-tight mb-4 text-black">

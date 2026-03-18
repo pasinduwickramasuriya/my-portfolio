@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Magnetic from "@/components/Magnetic";
 
 const Icons = {
     Github: (props: any) => (
@@ -28,7 +29,7 @@ export default function Contact({ email = "pasindusadanjana17@gmail.com" }) {
     };
 
     return (
-        <section id="contact" className="relative bg-white text-black py-24 md:py-40 overflow-hidden border-t border-neutral-100">
+        <section id="contact" className="relative bg-white text-black py-24 md:py-40 overflow-hidden">
             {/* Background Texture */}
             <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
 
@@ -41,7 +42,7 @@ export default function Contact({ email = "pasindusadanjana17@gmail.com" }) {
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="inline-flex items-center gap-3 mb-8 bg-lime-100 px-4 py-2 rounded-full border border-lime-200"
+                            className="inline-flex items-center gap-3 mb-8 bg-lime-50 px-4 py-2 rounded-full shadow-sm"
                         >
                             <span className="relative flex h-3 w-3">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
@@ -74,36 +75,38 @@ export default function Contact({ email = "pasindusadanjana17@gmail.com" }) {
                     <div className="flex flex-col justify-center space-y-8">
 
                         {/* Interactive Email Card */}
-                        <motion.button
-                            onClick={handleCopy}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="group relative w-full bg-neutral-50 border-2 border-neutral-100 p-8 rounded-[2.5rem] flex flex-col items-start gap-4 transition-all hover:border-black hover:bg-white overflow-hidden"
-                        >
-                            <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Main Channel</span>
-                            <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black break-all">
-                                {email}
-                            </h3>
-
-                            <div className="flex items-center gap-2 text-sm font-bold text-lime-600">
-                                <span>Click to copy address</span>
-                                <Icons.Arrow className="w-4 h-4" />
-                            </div>
-
-                            {/* Success Overlay */}
-                            <AnimatePresence>
-                                {isCopied && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}
-                                        className="absolute inset-0 bg-lime-500 flex items-center justify-center gap-4 z-20"
-                                    >
-                                        <span className="text-black font-black uppercase text-2xl tracking-widest">Address Copied!</span>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </motion.button>
+                        <Magnetic intensity={0.1}>
+                            <motion.button
+                                onClick={handleCopy}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="group relative w-full bg-white p-8 rounded-[2.5rem] flex flex-col items-start gap-4 transition-all duration-500 hover:-translate-y-2 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)]"
+                            >
+                                <span className="text-xs font-black uppercase tracking-widest text-neutral-400">Main Channel</span>
+                                <h3 className="text-2xl md:text-4xl font-black tracking-tight text-black break-all">
+                                    {email}
+                                </h3>
+    
+                                <div className="flex items-center gap-2 text-sm font-bold text-lime-600">
+                                    <span>Click to copy address</span>
+                                    <Icons.Arrow className="w-4 h-4" />
+                                </div>
+    
+                                {/* Success Overlay */}
+                                <AnimatePresence>
+                                    {isCopied && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -20 }}
+                                            className="absolute inset-0 bg-lime-500 flex items-center justify-center gap-4 z-20"
+                                        >
+                                            <span className="text-black font-black uppercase text-2xl tracking-widest">Address Copied!</span>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.button>
+                        </Magnetic>
 
                         {/* Social Row */}
                         <div className="grid grid-cols-2 gap-4">
@@ -111,18 +114,21 @@ export default function Contact({ email = "pasindusadanjana17@gmail.com" }) {
                                 { name: "GitHub", url: "https://github.com/pasinduwickramasuriya", icon: Icons.Github },
                                 { name: "LinkedIn", url: "https://www.linkedin.com/in/pasindu-sadhanjana/", icon: Icons.Linkedin }
                             ].map((link) => (
-                                <a
-                                    key={link.name}
-                                    href={link.url}
-                                    target="_blank"
-                                    className="group flex flex-col gap-4 p-8 border-2 border-neutral-100 rounded-[2.5rem] bg-neutral-50 hover:bg-black hover:text-white hover:border-black transition-all duration-500"
-                                >
-                                    <div className="flex justify-between items-center w-full">
-                                        <link.icon className="w-8 h-8 group-hover:text-lime-500 transition-colors" />
-                                        <Icons.Arrow className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-lime-500" />
-                                    </div>
-                                    <span className="font-black uppercase tracking-widest text-sm">{link.name}</span>
-                                </a>
+                                <Magnetic key={link.name} intensity={0.2}>
+                                    <a
+                                        href={link.url}
+                                        target="_blank"
+                                        className="group flex flex-col gap-4 p-8 rounded-[2.5rem] bg-white hover:-translate-y-2 transition-all duration-500 h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)]"
+                                    >
+                                        <div className="flex justify-between items-center w-full">
+                                            <link.icon className="w-8 h-8 text-neutral-400 group-hover:text-lime-500 transition-colors duration-500" />
+                                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-neutral-50 group-hover:bg-lime-400 transition-all duration-500">
+                                                <Icons.Arrow className="w-4 h-4 -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-black" />
+                                            </div>
+                                        </div>
+                                        <span className="font-black uppercase tracking-widest text-sm">{link.name}</span>
+                                    </a>
+                                </Magnetic>
                             ))}
                         </div>
                     </div>
