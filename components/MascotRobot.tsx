@@ -6,9 +6,24 @@ import { Float, PerspectiveCamera, Environment, ContactShadows } from "@react-th
 import * as THREE from "three";
 
 export default function MascotRobot() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth > 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  if (!isDesktop) return null;
+
   return (
     <div className="fixed bottom-[-30px] right-[-30px] w-[350px] h-[350px] z-50 pointer-events-none hidden md:block">
-      <Canvas>
+      <Canvas
+        dpr={[1, 1.5]} // Caps pixel ratio on high-DPI screens for much better rendering speed
+        performance={{ min: 0.5 }}
+        gl={{ antialias: true, powerPreference: "high-performance" }}
+      >
         <PerspectiveCamera makeDefault position={[0, 0, 6]} />
 
         {/* --- LIGHTING (High Contrast Studio Setup) --- */}

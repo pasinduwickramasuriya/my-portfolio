@@ -9,6 +9,7 @@ import {
     useTransform,
     useSpring,
     useMotionValue,
+    useMotionTemplate,
     useAnimationFrame,
     wrap,
 } from "framer-motion";
@@ -77,17 +78,42 @@ export default function Hero({
         offset: ["start start", "end start"]
     });
 
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    function handleMouseMove({ clientX, clientY, currentTarget }: React.MouseEvent) {
+        const { left, top } = currentTarget.getBoundingClientRect();
+        mouseX.set(clientX - left);
+        mouseY.set(clientY - top);
+    }
+
     // Make the hero image parallax slightly upwards while shrinking
     const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
     const imageScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
 
     return (
-        <section ref={containerRef} className="relative h-screen w-full bg-white overflow-hidden flex flex-col justify-end">
+        <section
+            ref={containerRef}
+            onMouseMove={handleMouseMove}
+            className="relative h-screen w-full bg-white overflow-hidden flex flex-col justify-end group"
+        >
 
             {/* BACKGROUND GRID (Darker gray for visibility on white) */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
-
+            {/* INTERACTIVE SPOTLIGHT GLOW */}
+            <motion.div
+                className="absolute inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                style={{
+                    background: useMotionTemplate`
+                        radial-gradient(
+                            600px circle at ${mouseX}px ${mouseY}px,
+                            rgba(132, 204, 22, 0.08),
+                            transparent 80%
+                        )
+                    `
+                }}
+            />
 
             {/* LAYER 1: THE MOVING TEXT */}
             <div className="absolute inset-0 flex flex-col justify-center z-0 opacity-70 select-none pointer-events-none">

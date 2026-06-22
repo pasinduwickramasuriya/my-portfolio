@@ -30,10 +30,17 @@ const defaultTimeline: TimelineItem[] = [
     },
     {
         year: "2025",
-        title: "Final Frontier",
+        title: "Advanced Engineering",
         description:
-            "Currently in the third year, final semester. Focusing on advanced HCI (Human-Computer Interaction) and preparing for professional deployment. Polishing skills to bridge the gap between code and design.",
-        tags: ["HCI", "AI Integration", "Graduation"],
+            "Focused on advanced HCI (Human-Computer Interaction), preparing professional-grade systems, and AI integration to bridge the gap between design and high-scale backends.",
+        tags: ["HCI", "AI Integration", "Advanced Systems"],
+    },
+    {
+        year: "2026",
+        title: "Graduation",
+        description:
+            "Graduated with a Bachelor of Information Technology (B.IT) degree from the University of Moratuwa, securing Second Class Honors.",
+        tags: ["B.IT Graduate", "University of Moratuwa", "Second Class"],
     },
 ];
 
